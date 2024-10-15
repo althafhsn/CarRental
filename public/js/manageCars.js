@@ -60,6 +60,18 @@ carBrand.addEventListener('change', async function () {
     }
 });
 
+async function checkRegistrationNumberExists(regNo) {
+    try {
+        const response = await fetch('http://localhost:5000/cars');
+        if (!response.ok) throw new Error('Failed to fetch cars');
+        const cars = await response.json();
+        return cars.some(car => car.regNo === regNo); // Check if regNo exists
+    } catch (error) {
+        console.error('Error checking registration number:', error);
+        return false;
+    }
+}
+
 // Add a new brand dynamically
 async function addNewCar() {
     const newBrand = addNewBrandInput.value.trim();
@@ -151,8 +163,17 @@ function generateId(length) {
 
 // Submit car form and add a new car
 async function submitCarForm() {
+  
     const imageInput = document.getElementById('logo-id');
     const file = imageInput.files[0];
+    const regNoValue = regNo.value.trim();
+
+    // Check if the registration number exists
+    const regExists = await checkRegistrationNumberExists(regNoValue);
+    if (regExists) {
+        alert('This registration number already exists. Please enter a unique registration number.');
+        return;
+    }
 
     if (!file) {
         alert('Please upload an image.');
@@ -283,7 +304,6 @@ function displayCarsInTable(cars) {
                     <td>${car.fuelType}</td>
                     <td>${car.mileage}</td>
                     <td>${car.dayPrice}</td>
-                    <td>${car.hourPrice}</td>
                     <td>
                         <button class="btn btn-outline-primary edit-btn" data-car-id="${car.id}">
                             <i class="fa-solid fa-pen-to-square"></i>
@@ -326,19 +346,19 @@ async function openCarEditModal(carId) {
         const car = await response.json();
 
         console.log(carId);
-        
+
         // Populate modal fields with the car data
         document.getElementById('editCarId').value = car.id;
         document.getElementById('editCarBrand').value = car.brand;
         document.getElementById('editCarName').value = car.name;
         document.getElementById('editCarRegNo').value = car.regNo;
-        document.getElementById('editCarYear').value = car.year; 
+        document.getElementById('editCarYear').value = car.year;
         document.getElementById('editCarGearType').value = car.gearType;
         document.getElementById('editCarSeatCount').value = car.seatCount;
         document.getElementById('editCarFuelType').value = car.fuelType;
         document.getElementById('editCarMileage').value = car.mileage;
         document.getElementById('editCarDayPrice').value = car.dayPrice;
-        document.getElementById('editCarHourPrice').value = car.hourPrice;
+
 
         // Show the modal
         const modal = new bootstrap.Modal(document.getElementById('editCarModal'));
@@ -348,7 +368,7 @@ async function openCarEditModal(carId) {
         alert('Failed to load car details.');
     }
 }
-      
+
 // Save changes to the car
 document.getElementById('saveCarChangesBtn').addEventListener('click', async function () {
     const carId = document.getElementById('editCarId').value;
@@ -362,7 +382,7 @@ document.getElementById('saveCarChangesBtn').addEventListener('click', async fun
         year: document.getElementById('editCarYear').value,
         mileage: document.getElementById('editCarMileage').value,
         dayPrice: document.getElementById('editCarDayPrice').value,
-        hourPrice: document.getElementById('editCarHourPrice').value
+
     };
 
     try {
