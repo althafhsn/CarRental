@@ -2,11 +2,14 @@
 async function fetchUsers() {
     try {
         const response = await fetch('http://localhost:5000/users');
-        if (!response.ok) { throw new Error('Failed to fetch users') };
+        if (!response.ok) {
+            throw new Error('Failed to fetch users');
+        }
         const users = await response.json();
         displayUsersInTable(users);
     } catch (err) {
         console.error('Error fetching users:', err);
+        alert('Error fetching users. Please try again later.');
         return [];
     }
 }
@@ -65,18 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchUsers(); // Fetch and display users when the page loads
 });
 
-
-// Fnc to open edit modal for cars
-
+// Function to open edit modal for users
 async function openUserEditModal(userId) {
     try {
         const response = await fetch(`http://localhost:5000/users/${userId}`);
         if (!response.ok) {
-            throw new Error('User Not Found');
+            throw new Error(`User not found (status: ${response.status})`);
         }
-        const user = await response.json();
-    
 
+        const user = await response.json();
+
+        // Populate the edit modal with user details
         document.getElementById('editUserId').value = user.id;
         document.getElementById('editFirstName').value = user.firstName;
         document.getElementById('editLastName').value = user.lastName;
@@ -86,16 +88,17 @@ async function openUserEditModal(userId) {
         document.getElementById('editNIC').value = user.nic;
         document.getElementById('editLicense').value = user.license;
 
-        // Show the modal
-        const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        // Show the modal (ensure it's properly initialized)
+        const modalElement = document.getElementById('editUserModal');
+        const modal = new bootstrap.Modal(modalElement);
         modal.show();
     } catch (error) {
-        console.error('Error fetching user details for editing :', error);
-        alert('Fail to load user Details');
+        console.error('Error fetching user details:', error); // Log the specific error
+        alert('Failed to load user details. Please try again later.');
     }
 }
 
-
+// Event listener for saving edited user details
 document.getElementById('saveUserChangesBtn').addEventListener('click', async function () {
     const userId = document.getElementById('editUserId').value;
     const updatedUserData = {
@@ -107,8 +110,9 @@ document.getElementById('saveUserChangesBtn').addEventListener('click', async fu
         license: document.getElementById('editLicense').value,
         nic: document.getElementById('editNIC').value
     };
+
     try {
-        const response = await fetch(`http://localhost:5000/users/${userId}`,{
+        const response = await fetch(`http://localhost:5000/users/${userId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedUserData)
@@ -116,18 +120,20 @@ document.getElementById('saveUserChangesBtn').addEventListener('click', async fu
         if (!response.ok) throw new Error('Failed to save changes');
 
         // Close the modal after successful update
-        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+        const modalElement = document.getElementById('editUserModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
         modal.hide();
 
         // Refresh the user list to reflect changes
         fetchUsers();
         alert('User details updated successfully!');
-    } catch(error){
+    } catch (error) {
         console.error('Error saving user details:', error);
-        alert('Failed to save changes.');
+        alert('Failed to save changes. Please try again later.');
     }
 });
 
+// Function to delete a user
 async function deleteUser(userId) {
     try {
         const response = await fetch(`http://localhost:5000/users/${userId}`, {
@@ -135,13 +141,13 @@ async function deleteUser(userId) {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to delete User');
+            throw new Error(`Failed to delete user (status: ${response.status})`);
         }
 
         alert('User deleted successfully');
-        fetchUsers(); // Refresh the car table
-    }catch (error) {
+        fetchUsers(); // Refresh the user table after deletion
+    } catch (error) {
         console.error('Error deleting user:', error);
-        alert('There was an error deleting the User.');
+        alert('There was an error deleting the user. Please try again later.');
     }
 }

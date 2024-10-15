@@ -214,11 +214,11 @@
                               </div>
                             </div>
 
-                            <div class="row mb-3">
-                              <div class="col-md-6">
+                            <div class="row mb-3 mx-1">
+
                                 <input type="number" class="form-control rounded" id="dayPrice" name="dayPrice"
                                   placeholder="Enter Daily Price" required>
-                              </div>
+
                             </div>
                           </div>
                         </div>
@@ -234,11 +234,11 @@
             </div>
 
             <!-- Edit Car Modal price -->
-            <div class="modal fade" id="editCarModal" tabindex="-1" aria-labelledby="title" aria-hidden="true">
+            <div class="modal fade" id="editCarModal" tabindex="-1" aria-labelledby="carModalEdit" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header text-center">
-                    <h1 class="modal-title fs-5" id="title">Add Car</h1>
+                    <h1 class="modal-title fs-5" id="carModalEdit">Add Car</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body" style="border: none;">
@@ -297,18 +297,12 @@
                             </div>
                           </div>
 
-                          <div class="row mb-3">
-                            <div class="col-md-6">
+                          
+                            <div class="mb-3">
                               <div for="editCarDayPrice" class="form-label border-">Day Price</div>
                               <input type="number" class="form-control rounded" id="editCarDayPrice" name="dayPrice"
                                 placeholder="Enter Daily Price" required>
                             </div>
-                            <div class="col-md-6">
-                              <div for="editCarHourPrice" class="form-label border-">Hour Price</div>
-                              <input type="number" class="form-control rounded" id="editCarHourPrice" name="hourPrice"
-                                placeholder="Enter Hourly Price" required>
-                            </div>
-                          </div>
                         </div>
                         <input type="hidden" id="editCarId">
                       </div>
@@ -339,7 +333,6 @@
                     <th scope="col">Fuel</th>
                     <th scope="col">Milage</th>
                     <th scope="col">Price/Day</th>
-                    <th scope="col">Price/Hour</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>

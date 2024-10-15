@@ -95,42 +95,7 @@
       </header>
     </div>
     <div class="container p-3 shadow rounded bg-white" id="exploreCars">
-      <h3 class="mb-4 text-center">
-        Enter Your Pickup Location
-        <small class="text-body-secondary">with Date & Time</small>
-      </h3>
-      <form action="submit" id="dateInputForm">
-        <div class="row mb-4">
-          <div class="col-12 mb-3">
-            <input
-              type="hidden"
-              class="form-control"
-              id="pickupId"
-              placeholder="Id"
-            />
-          </div>
-          <div class="col-lg-4 col-sm-12 mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="pickupLocation"
-              placeholder="Select Your Pickup Location"
-              required
-            />
-          </div>
-          <div class="col-lg-4 col-sm-12 mb-3 d-flex">
-            <input id="pickupDate" type="date" class="form-control" required />
-            <input id="pickupTime" type="time" class="form-control" required />
-          </div>
-          <div class="col-lg-4 col-sm-12 mb-3 d-flex">
-            <input id="returnDate" type="date" class="form-control" required />
-            <input id="returnTime" type="time" class="form-control" required />
-          </div>
-          <div class="col d-flex justify-content-center">
-            <button class="btn btn-primary" type="submit">Cars</button>
-          </div>
-        </div>
-      </form>
+      <div class="row row-cols-1 row-cols-md-4 g-4" id="showCarCard"></div>
     </div>
 
     <div class="container" id="about">
@@ -510,6 +475,7 @@
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
     ></script>
     <script src="./js/main.js"></script>
+    <script src="./js/carCard.js"></script>
     <script
       src="https://kit.fontawesome.com/0c088ff309.js"
       crossorigin="anonymous"

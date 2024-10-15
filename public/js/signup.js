@@ -27,11 +27,10 @@ function generateId(length) {
     return id;
 }
 
-// Fetch users from the JSON server
 // Fetch users from the JSON server (Change the endpoint to the correct one)
 async function fetchUsers() {
     try {
-        const response = await fetch('http://localhost:5034/api/Customer/getAllCustomers'); // Adjust the endpoint
+        const response = await fetch('http://localhost:5000/users'); // Adjust the endpoint
         if (!response.ok) throw new Error('Failed to fetch users');
         return await response.json();
     } catch (err) {
@@ -52,16 +51,15 @@ async function submitSignup() {
 
     // Create user data object
     const userData = {
-        customerId: generateId(27),
+        id: generateId(27),
         firstName: firstName.value.trim(),
         lastName: lastName.value.trim(),
-        imagePath: "string",  // Temporary placeholder, ensure this is correct
-        phone: mobileNo.value.trim(),
-        address: address.value.trim(),
-        password: encryptPassword(password.value),
         email: email.value.trim(),
+        mobileNo: mobileNo.value.trim(),
+        address: address.value.trim(),
+        license: license.value.trim(),
         nic: nic.value.trim(),
-        licence: license.value.trim()
+        password: encryptPassword(password.value)
     };
 
     // Check if all fields are filled
@@ -74,11 +72,11 @@ async function submitSignup() {
         // Fetch existing users to check for duplicate license, NIC, email, or mobile number
         const users = await fetchUsers();
         console.log('Users fetched:', users); // Debug: Check the fetched users
-        
-        const userExists = users.some(user => 
-            user.license === userData.licence || 
-            user.nic === userData.nic || 
-            user.email === userData.email || 
+
+        const userExists = users.some(user =>
+            user.license === userData.licence ||
+            user.nic === userData.nic ||
+            user.email === userData.email ||
             user.mobileNo === userData.phone
         );
 
@@ -89,15 +87,15 @@ async function submitSignup() {
         }
 
         // Submit the data if no duplicates are found
-        const response = await fetch('http://localhost:5034/api/Customer/addCustomer', {
+        const response = await fetch('http://localhost:5000/users', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userData)
         });
-        
+
         const responseData = await response.json();
         console.log('Server response:', responseData);
-        
+
         if (response.ok) {
             alert('User added successfully!');
             signupForm.reset();
@@ -106,7 +104,7 @@ async function submitSignup() {
             console.error('Error response:', responseData);
             alert('Failed to add user. Error: ' + responseData.message || 'Unknown error');
         }
-        
+
     } catch (error) {
         console.error('Error submitting the signup form:', error);
         alert('Error adding the user. Please try again.');
