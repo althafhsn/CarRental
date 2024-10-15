@@ -93,8 +93,6 @@ async function openUserEditModal(userId) {
         const modal = new bootstrap.Modal(modalElement);
         modal.show();
     } catch (error) {
-        console.error('Error fetching user details:', error); // Log the specific error
-        alert('Failed to load user details. Please try again later.');
     }
 }
 
@@ -128,7 +126,7 @@ document.getElementById('saveUserChangesBtn').addEventListener('click', async fu
         fetchUsers();
         alert('User details updated successfully!');
     } catch (error) {
-        console.error('Error saving user details:', error);
+  
         alert('Failed to save changes. Please try again later.');
     }
 });

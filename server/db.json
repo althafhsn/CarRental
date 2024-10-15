@@ -99,15 +99,14 @@
   ],
   "users": [
     {
-      "id": "850389081576490217506053059",
-      "firstName": "Althaf",
-      "lastName": "Husain",
-      "email": "althafhsn.c@gmail.com",
-      "mobileNo": "0774477065",
-      "address": "152, Sammattivady road,",
-      "license": "B1035344",
-      "nic": "200021303410",
-      "password": "YWx0aGFm"
+      "firstName": "",
+      "lastName": "",
+      "email": "",
+      "mobileNo": "",
+      "address": "",
+      "nic": "",
+      "license": "",
+      "id": "850389081576490217506053059"
     }
   ],
   "rentalRequest": [
@@ -119,6 +118,15 @@
       "endDate": "2024-10-17",
       "duration": "1",
       "amount": "200.00"
+    },
+    {
+      "id": "5847184839097575",
+      "carId": "968853940807133552521303",
+      "customerId": "850389081576490217506053059",
+      "startDate": "2024-10-24",
+      "endDate": "2024-10-26",
+      "duration": "2",
+      "amount": "300.00"
     }
   ]
 }
