@@ -1,20 +1,20 @@
 
 // SIDBAR
 
-// window.onload = function() {
-//     const isAuthenticated = sessionStorage.getItem("isAuthenticated");
+window.onload = function() {
+    const isAuthenticated = sessionStorage.getItem("isAuthenticated");
 
-//     // If the admin is not authenticated, redirect to login page
-//     if (isAuthenticated !== "true") {
-//         window.location.href = "./adminLogin.html";
-//     }
-// };
+    // If the admin is not authenticated, redirect to login page
+    if (isAuthenticated !== "true") {
+        window.location.href = "./adminLogin.html";
+    }
+};
 
-// document.getElementById("logoutButton").addEventListener('click', ()=>{
+document.getElementById("logoutButton").addEventListener('click', ()=>{
    
-//     sessionStorage.removeItem("isAuthenticated");
-//     window.location.href = "./adminLogin.html";
-// } )
+    sessionStorage.removeItem("isAuthenticated");
+    window.location.href = "./adminLogin.html";
+} )
 
 // Optional: Log out function to clear authentication
 function logout() {

@@ -1,12 +1,13 @@
+// Toggle the profile dropdown on image click
 const profile = document.querySelector('.profile');
 const imgProfile = document.querySelector('img');
 const dropdownProfile = document.querySelector('.profile-link');
 
-
 imgProfile.addEventListener('click', function () {
     dropdownProfile.classList.toggle('show');
 });
-document.addEventListener('DOMContentLoaded', function() {
+
+document.addEventListener('DOMContentLoaded', function () {
     const signinProfile = document.getElementById('signinProfile');
     const userProfile = document.getElementById('userProfile');
 
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // If authenticated, show the user profile and hide the sign-in button
         userProfile.style.display = 'block';
         signinProfile.style.display = 'none';
-        
+
         // Optionally, set the user profile image (if stored in sessionStorage)
         const profileImage = sessionStorage.getItem('profileImage');
         if (profileImage) {
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Logout functionality: when the user clicks the logout button
     const logoutButton = document.getElementById('logoutButton');
     if (logoutButton) {
-        logoutButton.addEventListener('click', function() {
+        logoutButton.addEventListener('click', function () {
             // Clear session storage
             sessionStorage.removeItem('isAuthenticatedUser');
             sessionStorage.removeItem('profileImage');
@@ -41,11 +42,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-
 // Function to open the Edit User modal
 function openEditUserModal() {
     // Get the user ID from sessionStorage
-    const userId = sessionStorage.getItem('userId'); 
+    const userId = sessionStorage.getItem('userId');
 
     if (!userId) {
         console.error('No user ID found in session storage.');
@@ -53,7 +53,7 @@ function openEditUserModal() {
     }
 
     // Fetch user details based on the userId from sessionStorage
-    fetch(`http://localhost:5000/users/${userId}`)
+    fetch(`http://localhost:5034/api/Customer/GetCustomerById?customerId=${userId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Error fetching user data: ${response.statusText}`);
@@ -61,18 +61,17 @@ function openEditUserModal() {
             return response.json();
         })
         .then(user => {
-            // Check if user data is retrieved correctly
             console.log('User data fetched:', user);
 
             // Populate form fields with the fetched user data
-            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editUserId').value = user.customerId;
             document.getElementById('editFirstName').value = user.firstName;
             document.getElementById('editLastName').value = user.lastName;
             document.getElementById('editEmail').value = user.email;
-            document.getElementById('editMobileNo').value = user.mobileNo;
+            document.getElementById('editMobileNo').value = user.phone;
             document.getElementById('editAddress').value = user.address;
             document.getElementById('editNIC').value = user.nic;
-            document.getElementById('editLicense').value = user.license;
+            document.getElementById('editLicense').value = user.licence;
 
             // Show the modal after populating the data
             const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
@@ -85,67 +84,98 @@ function openEditUserModal() {
 }
 
 // Function to save the edited user details
-function saveUserChanges() {
-    // Get the user ID from sessionStorage
-    const userId = sessionStorage.getItem('userId'); 
+document.getElementById('saveUserChangesBtn').addEventListener('click', async function (e) {
+    e.preventDefault();  // Prevent form submission
 
-    if (!userId) {
-        console.error('No user ID found in session storage.');
-        return;
-    }
-
-    // Prepare the updated user data from form inputs
-    const updatedUser = {
+    const userId = document.getElementById('editUserId').value;
+    const updatedUserData = {
         firstName: document.getElementById('editFirstName').value,
         lastName: document.getElementById('editLastName').value,
         email: document.getElementById('editEmail').value,
-        mobileNo: document.getElementById('editMobileNo').value,
+        phone: document.getElementById('editMobileNo').value,
         address: document.getElementById('editAddress').value,
-        nic: document.getElementById('editNIC').value,
-        license: document.getElementById('editLicense').value
+        licence: document.getElementById('editLicense').value,
+        nic: document.getElementById('editNIC').value
     };
 
-    if (!Object.values(updatedUser).every(value => value.trim() !== '' && value !== null)) {
+    // Ensure no empty fields before making request
+    if (!Object.values(updatedUserData).every(value => value.trim() !== '')) {
         alert('Please fill out all required fields.');
         return;
     }
 
-    // Send a PUT request to update user details in the database
-    fetch(`http://localhost:5000/users/${userId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedUser)
-    })
-    .then(response => {
+    try {
+        const response = await fetch(`http://localhost:5034/api/Customer/UpdateCustomerById/${userId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedUserData)
+        });
+
         if (!response.ok) {
-            throw new Error(`Error updating user: ${response.statusText}`);
+            const errorResponse = await response.json();  // Get error details from the response
+            console.error('Response error:', errorResponse);
+            throw new Error('Failed to save changes');
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log('User updated successfully:', data);
-        
+
+        // Log successful response
+        const responseData = await response.json();
+        console.log('User updated successfully:', responseData);
+
         // Close the modal after successful update
-        const editModal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-        editModal.hide();
+        const modalElement = document.getElementById('editUserModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal.hide();
 
-        // Optionally reload the page or update the UI to reflect the changes
-        // location.reload();
-    })
-    .catch(error => {
-        console.error('Error updating user:', error);
-        alert('Failed to update user data. Please try again.');
-    });
-}
-
-// Attach the save function to the "Save Changes" button
-document.getElementById('saveUserChangesBtn').addEventListener('click', (e) => {
-    e.preventDefault();  // Prevent form submission
-    saveUserChanges();
+        // Refresh the user list to reflect changes (Optional: adjust this depending on how you want to update the UI)
+        fetchUsers();
+        alert('User details updated successfully!');
+    } catch (error) {
+        console.error('Error saving changes:', error);
+        alert('Failed to save changes. Please try again later.');
+    }
+    window.location.reload();
 });
 
+// Function to fetch and refresh the user list (optional, if needed for updating UI after edit)
+function fetchUsers() {
+    // Placeholder for user list refresh functionality
+    // Call your API here to refresh the user list, if needed
+    console.log('Refreshing user list...')
+}
 
+async function checkForCustomerOverdueRentals() {
+    try {
+        // Get the logged-in customer ID from session storage
+        const loggedInCustomerId = sessionStorage.getItem('userId');
+        
+        // Fetch all rental requests
+        const response = await fetch('http://localhost:5034/api/RentalRequest/getAllRentalRequests');
+        const rentals = await response.json();
 
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1); // Get tomorrow's date
 
+        // Check if the logged-in customer has any overdue rentals
+        rentals.forEach(rental => {
+            const rentalEndDate = new Date(rental.endDate);
+            
+            // Calculate the duration in days between today and the rental end date
+            const duration = Math.floor((rentalEndDate - today) / (1000 * 60 * 60 * 24));
+
+            // Check if the rental is for the logged-in customer and if it's due tomorrow
+            if (rental.customerId == loggedInCustomerId && rental.status === 'active' && duration > 1) {
+                alert(`Reminder: Your rental is due in ${duration} days! Rental ID: ${rental.rentalId}`);
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching rental data:', error);
+    }
+}
+
+// Call the function periodically, e.g., every day or at a specific interval
+
+document.addEventListener('DOMContentLoaded',()=>{
+    setInterval(checkForCustomerOverdueRentals, 24 * 60 * 60 * 1000); // Check every 24 hours
+
+});

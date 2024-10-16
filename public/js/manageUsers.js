@@ -1,7 +1,7 @@
 // Fetch users from the JSON server
 async function fetchUsers() {
     try {
-        const response = await fetch('http://localhost:5000/users');
+        const response = await fetch('http://localhost:5034/api/Customer/getAllCustomers');
         if (!response.ok) {
             throw new Error('Failed to fetch users');
         }
@@ -25,19 +25,19 @@ function displayUsersInTable(users) {
 
         row.innerHTML = `
             <td>${index + 1}</td>
-            <td>${user.id}</td>
+            <td>${user.customerId}</td>
             <td>${user.firstName}</td>
             <td>${user.lastName}</td>
             <td>${user.address}</td>
             <td>${user.email}</td>
-            <td>${user.mobileNo}</td>
-            <td>${user.license}</td>
+            <td>${user.phone}</td>
+            <td>${user.licence}</td>
             <td>${user.nic}</td>
             <td>
-                <button class="btn btn-outline-primary edit-btn" data-user-id="${user.id}">
+                <button class="btn btn-outline-primary edit-btn" data-user-id="${user.customerId}">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button> 
-                <button class="btn btn-outline-danger delete-btn" data-user-id="${user.id}">
+                <button class="btn btn-outline-danger delete-btn" data-user-id="${user.customerId}">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </td>
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Function to open edit modal for users
 async function openUserEditModal(userId) {
     try {
-        const response = await fetch(`http://localhost:5000/users/${userId}`);
+        const response = await fetch(`http://localhost:5034/api/Customer/GetCustomerById?customerId=${userId}`);
         if (!response.ok) {
             throw new Error(`User not found (status: ${response.status})`);
         }
@@ -79,14 +79,14 @@ async function openUserEditModal(userId) {
         const user = await response.json();
 
         // Populate the edit modal with user details
-        document.getElementById('editUserId').value = user.id;
+        document.getElementById('editUserId').value = user.customerId;
         document.getElementById('editFirstName').value = user.firstName;
         document.getElementById('editLastName').value = user.lastName;
         document.getElementById('editEmail').value = user.email;
-        document.getElementById('editMobileNo').value = user.mobileNo;
+        document.getElementById('editMobileNo').value = user.phone;
         document.getElementById("editAddress").value = user.address;
         document.getElementById('editNIC').value = user.nic;
-        document.getElementById('editLicense').value = user.license;
+        document.getElementById('editLicense').value = user.licence;
 
         // Show the modal (ensure it's properly initialized)
         const modalElement = document.getElementById('editUserModal');
@@ -103,15 +103,15 @@ document.getElementById('saveUserChangesBtn').addEventListener('click', async fu
         firstName: document.getElementById('editFirstName').value,
         lastName: document.getElementById('editLastName').value,
         email: document.getElementById('editEmail').value,
-        mobileNo: document.getElementById('editMobileNo').value,
+        phone: document.getElementById('editMobileNo').value,
         address: document.getElementById("editAddress").value,
-        license: document.getElementById('editLicense').value,
+        licence: document.getElementById('editLicense').value,
         nic: document.getElementById('editNIC').value
     };
 
     try {
-        const response = await fetch(`http://localhost:5000/users/${userId}`, {
-            method: 'PATCH',
+        const response = await fetch(`http://localhost:5034/api/Customer/UpdateCustomerById/${userId}`, {
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedUserData)
         });
@@ -134,7 +134,7 @@ document.getElementById('saveUserChangesBtn').addEventListener('click', async fu
 // Function to delete a user
 async function deleteUser(userId) {
     try {
-        const response = await fetch(`http://localhost:5000/users/${userId}`, {
+        const response = await fetch(`http://localhost:5034/api/Customer/DeleteById/${userId}`, {
             method: 'DELETE',
         });
 

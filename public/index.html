@@ -42,7 +42,7 @@
                 <img src="./assets/userimage.avif" alt="">
                 <ul class="profile-link" style="list-style-type: none ;">
                   <li id="viweProfile" data-bs-toggle="modal"
-                  data-bs-target="#editUserModal"><a href="#"><i class="fa-solid fa-user icon"></i> Profile</a></li>
+                  data-bs-target="#editUserModal" onclick="openEditUserModal()"><a href="#"><i class="fa-solid fa-user icon"></i> Profile</a></li>
                   <li id="viewHistory"><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> History</a></li>
                   <li id="logoutButton"><a href="#"><i class="fa-solid fa-right-from-bracket icon"></i>Logout</a></li>
                 </ul>
@@ -110,15 +110,15 @@
                       </div>
                       <div class="col-md-12">
                           <label for="editAddress" class="form-label">Address</label>
-                          <input type="text" class="form-control" id="editAddress" required>
+                          <input type="text" class="form-control" id="editAddress" required disabled>
                       </div>
                       <div class="col-md-6">
                           <label for="editNIC" class="form-label">NIC Number</label>
-                          <input type="text" class="form-control" id="editNIC" required>
+                          <input type="text" class="form-control" id="editNIC" required disabled>
                       </div>
                       <div class="col-md-6">
                           <label for="editLicense" class="form-label">License</label>
-                          <input type="text" class="form-control" id="editLicense" required>
+                          <input type="text" class="form-control" id="editLicense" required disabled>
                       </div>
                   </form>
               </div>
@@ -427,3 +427,4 @@
 </body>
 
 </html>
+
