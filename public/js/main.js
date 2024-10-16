@@ -1,79 +1,181 @@
-// // Get today's date and time
-// const today = new Date();
-// const year = today.getFullYear();
-// const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-// const day = String(today.getDate()).padStart(2, '0');
-// const hours = String(today.getHours()).padStart(2, '0');
-// const minutes = String(today.getMinutes()).padStart(2, '0');
+// Toggle the profile dropdown on image click
+const profile = document.querySelector('.profile');
+const imgProfile = document.querySelector('img');
+const dropdownProfile = document.querySelector('.profile-link');
 
-// // Format date and time for input fields
-// const currentDate = `${year}-${month}-${day}`;
-// const currentTime = `${hours}:${minutes}`;
+imgProfile.addEventListener('click', function () {
+    dropdownProfile.classList.toggle('show');
+});
 
-// // Set the values for the pickup date/time inputs
-// document.getElementById('pickupDate').value = currentDate;
-// document.getElementById('pickupTime').value = currentTime;
+document.addEventListener('DOMContentLoaded', function () {
+    const signinProfile = document.getElementById('signinProfile');
+    const userProfile = document.getElementById('userProfile');
 
-// // Genarate Rendom Id 
-// function genarateId(sPoint, leng) {
-//     const char = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
-//     let startpoint = `${sPoint}-`;
-//     for (let i = 0; i <= leng; i++) {
-//         let rendomId = Math.floor(Math.random() * char.length);
-//         startpoint += char[rendomId];
-//     }
-//     return startpoint;
-// }
+    // Check if the user is authenticated by looking for a session storage item
+    if (sessionStorage.getItem('isAuthenticatedUser') === 'true') {
+        // If authenticated, show the user profile and hide the sign-in button
+        userProfile.style.display = 'block';
+        signinProfile.style.display = 'none';
 
-// // Form event listener
-// const dateInputForm = document.getElementById('dateInputForm');
+        // Optionally, set the user profile image (if stored in sessionStorage)
+        const profileImage = sessionStorage.getItem('profileImage');
+        if (profileImage) {
+            userProfile.querySelector('img').src = profileImage;
+        }
 
-// // Ensure to prevent the default form submission
-// dateInputForm.addEventListener('submit', (e) => {
-//     e.preventDefault(); // Properly prevent form from submitting
+    } else {
+        // If not authenticated, show the sign-in button and hide the user profile
+        userProfile.style.display = 'none';
+        signinProfile.style.display = 'block';
+    }
 
-//     // Getting value of rent and return
-//     const pickupLocation = document.getElementById('pickupLocation').value;
-//     const pickupDate = document.getElementById('pickupDate').value;
-//     const pickupTime = document.getElementById('pickupTime').value;
-//     const returnDate = document.getElementById('returnDate').value;
-//     const returnTime = document.getElementById('returnTime').value;
+    // Logout functionality: when the user clicks the logout button
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function () {
+            // Clear session storage
+            sessionStorage.removeItem('isAuthenticatedUser');
+            sessionStorage.removeItem('profileImage');
+            // Redirect to the sign-in page or reload to refresh the visibility
+            window.location.href = 'signin.html';
+        });
+    }
+});
 
+// Function to open the Edit User modal
+function openEditUserModal() {
+    // Get the user ID from sessionStorage
+    const userId = sessionStorage.getItem('userId');
 
-//     // Check if all fields are filled
-//     if (!pickupLocation || !pickupDate || !pickupTime || !returnDate || !returnTime) {
-//         alert("Please fill in the pickup and return details correctly.");
-//     } else {
-//         const pickupDetail = {
-//             id: genarateId("PUDT", 16),
-//             location: pickupLocation,
-//             pickDate: pickupDate,
-//             pickTime: pickupTime,
-//             returnDate: returnDate,
-//             returnTime: returnTime
-//         };
+    if (!userId) {
+        console.error('No user ID found in session storage.');
+        return;
+    }
 
-//         // Fetch API to submit data to the JSON server
-//         fetch('http://localhost:5000/PickupDetails', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(pickupDetail)
-//         })
-//             .then(response => {
-//                 if (!response.ok) {
-//                     throw new Error('Network response was not ok');
-//                 }
-//                 return response.json();
-//             })
-//             .then(data => {
-//                 // Redirect to another page
-//                 window.location.href = 'explore-cars.html';
-//             })
-//             .catch(error => {
-//                 console.error("Error submitting data:", error);
-//                 alert("There was an error submitting the rental details.");
-//             });
-//     }
-// });
+    // Fetch user details based on the userId from sessionStorage
+    fetch(`http://localhost:5034/api/Customer/GetCustomerById?customerId=${userId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error fetching user data: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(user => {
+            console.log('User data fetched:', user);
+
+            // Populate form fields with the fetched user data
+            document.getElementById('editUserId').value = user.customerId;
+            document.getElementById('editFirstName').value = user.firstName;
+            document.getElementById('editLastName').value = user.lastName;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editMobileNo').value = user.phone;
+            document.getElementById('editAddress').value = user.address;
+            document.getElementById('editNIC').value = user.nic;
+            document.getElementById('editLicense').value = user.licence;
+
+            // Show the modal after populating the data
+            const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            editModal.show();
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+            alert('Failed to fetch user data. Please try again later.');
+        });
+}
+
+// Function to save the edited user details
+document.getElementById('saveUserChangesBtn').addEventListener('click', async function (e) {
+    e.preventDefault();  // Prevent form submission
+
+    const userId = document.getElementById('editUserId').value;
+    const updatedUserData = {
+        firstName: document.getElementById('editFirstName').value,
+        lastName: document.getElementById('editLastName').value,
+        email: document.getElementById('editEmail').value,
+        phone: document.getElementById('editMobileNo').value,
+        address: document.getElementById('editAddress').value,
+        licence: document.getElementById('editLicense').value,
+        nic: document.getElementById('editNIC').value
+    };
+
+    // Ensure no empty fields before making request
+    if (!Object.values(updatedUserData).every(value => value.trim() !== '')) {
+        alert('Please fill out all required fields.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:5034/api/Customer/UpdateCustomerById/${userId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedUserData)
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();  // Get error details from the response
+            console.error('Response error:', errorResponse);
+            throw new Error('Failed to save changes');
+        }
+
+        // Log successful response
+        const responseData = await response.json();
+        console.log('User updated successfully:', responseData);
+
+        // Close the modal after successful update
+        const modalElement = document.getElementById('editUserModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal.hide();
+
+        // Refresh the user list to reflect changes (Optional: adjust this depending on how you want to update the UI)
+        fetchUsers();
+        alert('User details updated successfully!');
+    } catch (error) {
+        console.error('Error saving changes:', error);
+        alert('Failed to save changes. Please try again later.');
+    }
+    window.location.reload();
+});
+
+// Function to fetch and refresh the user list (optional, if needed for updating UI after edit)
+function fetchUsers() {
+    // Placeholder for user list refresh functionality
+    // Call your API here to refresh the user list, if needed
+    console.log('Refreshing user list...')
+}
+
+async function checkForCustomerOverdueRentals() {
+    try {
+        // Get the logged-in customer ID from session storage
+        const loggedInCustomerId = sessionStorage.getItem('userId');
+        
+        // Fetch all rental requests
+        const response = await fetch('http://localhost:5034/api/RentalRequest/getAllRentalRequests');
+        const rentals = await response.json();
+
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1); // Get tomorrow's date
+
+        // Check if the logged-in customer has any overdue rentals
+        rentals.forEach(rental => {
+            const rentalEndDate = new Date(rental.endDate);
+            
+            // Calculate the duration in days between today and the rental end date
+            const duration = Math.floor((rentalEndDate - today) / (1000 * 60 * 60 * 24));
+
+            // Check if the rental is for the logged-in customer and if it's due tomorrow
+            if (rental.customerId == loggedInCustomerId && rental.status === 'active' && duration > 1) {
+                alert(`Reminder: Your rental is due in ${duration} days! Rental ID: ${rental.rentalId}`);
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching rental data:', error);
+    }
+}
+
+// Call the function periodically, e.g., every day or at a specific interval
+
+document.addEventListener('DOMContentLoaded',()=>{
+    setInterval(checkForCustomerOverdueRentals, 24 * 60 * 60 * 1000); // Check every 24 hours
+
+});

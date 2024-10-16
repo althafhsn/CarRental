@@ -60,19 +60,15 @@ carBrand.addEventListener('change', async function () {
     }
 });
 
-async function checkRegistrationNumberExists(regNo) {
-    try {
-        const response = await fetch('http://localhost:5000/cars');
-        if (!response.ok) throw new Error('Failed to fetch cars');
-        const cars = await response.json();
-        return cars.some(car => car.regNo === regNo); // Check if regNo exists
-    } catch (error) {
-        console.error('Error checking registration number:', error);
-        return false;
+function generateId(length) {
+    const chars = "1234567890";
+    let id = "";
+    for (let i = 0; i < length; i++) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    return id;
 }
 
-// Add a new brand dynamically
 async function addNewCar() {
     const newBrand = addNewBrandInput.value.trim();
 
@@ -150,17 +146,17 @@ async function addNewModel() {
         alert('Model already exists or invalid brand.');
     }
 }
-
-// Generate a random ID
-function generateId(length) {
-    const chars = "1234567890";
-    let id = "";
-    for (let i = 0; i < length; i++) {
-        id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
+async function checkRegistrationNumberExists(regNo) {
+try {
+    const response = await fetch('http://localhost:5034/api/Car/getAllCars');
+    if (!response.ok) throw new Error('Failed to fetch cars');
+    const cars = await response.json();
+    return cars.some(car => car.regNo === regNo); // Check if regNo exists
+} catch (error) {
+    console.error('Error checking registration number:', error);
+    return false;
 }
-
+}
 // Submit car form and add a new car
 async function submitCarForm() {
   
@@ -183,17 +179,17 @@ async function submitCarForm() {
     const base64Image = await getBase64(file);
 
     const carData = {
-        id: generateId(24),
-        image: base64Image,
+        carId: generateId(12),
+        imagePath: base64Image,
         brand: carBrand.value,
-        name: carName.value,
+        model: carName.value,
         gearType: gearType.value,
         seatCount: seatCount.value,
         fuelType: fuelType.value,
         mileage: mileage.value,
         year: carYear.value,
         regNo: regNo.value,
-        dayPrice: dayPrice.value,
+        dailyPrice: dayPrice.value,
     };
 
     if (!Object.values(carData).every(value => value.trim() !== '' && value !== null)) {
@@ -202,7 +198,7 @@ async function submitCarForm() {
     }
 
     try {
-        const response = await fetch('http://localhost:5000/cars', {
+        const response = await fetch('http://localhost:5034/api/Car/Add-car', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(carData)
@@ -271,7 +267,7 @@ carForm.addEventListener('submit', async function (e) {
 // Car Table view
 async function fetchCars() {
     try {
-        const response = await fetch('http://localhost:5000/cars');
+        const response = await fetch('http://localhost:5034/api/Car/getAllCars');
         if (!response.ok) {
             throw new Error('Failed to fetch car details');
         }
@@ -294,21 +290,21 @@ function displayCarsInTable(cars) {
 
         row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>${car.id}</td>
+                    <td>${car.carId}</td>
                     <td>${car.regNo}</td>
-                    <td style="text-align: center;"><img src="${car.image}" alt="" style="width: 36px; height: 36px; border-radius: 10%; "></td>
+                    <td style="text-align: center;"><img src="${car.imagePath}" alt="" style="width: 36px; height: 36px; border-radius: 10%; "></td>
                     <td>${car.brand}</td>
-                    <td>${car.name}</td>
+                    <td>${car.model}</td>
                     <td>${car.gearType}</td>
                     <td>${car.seatCount}</td>
                     <td>${car.fuelType}</td>
                     <td>${car.mileage}</td>
-                    <td>${car.dayPrice}</td>
+                    <td>${car.dailyPrice}</td>
                     <td>
-                        <button class="btn btn-outline-primary edit-btn" data-car-id="${car.id}">
+                        <button class="btn btn-outline-primary car-edit-btn" data-car-id="${car.carId}">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button> 
-                        <button class="btn btn-outline-danger delete-btn" data-car-id="${car.id}">
+                        <button class="btn btn-outline-danger car-delete-btn" data-car-id="${car.carId}">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
@@ -321,14 +317,14 @@ function displayCarsInTable(cars) {
     });
 
     // Add event listeners for Edit buttons
-    document.querySelectorAll('.edit-btn').forEach(button => {
+    document.querySelectorAll('.car-edit-btn').forEach(button => {
         button.addEventListener('click', function (event) {
             const carId = event.target.closest('button').getAttribute('data-car-id');
             openCarEditModal(carId);
         });
     });
 
-    document.querySelectorAll('.delete-btn').forEach(button => {
+    document.querySelectorAll('.car-delete-btn').forEach(button => {
         button.addEventListener('click', function (event) {
             const carId = event.target.closest('button').getAttribute('data-car-id');
             deleteCar(carId);
@@ -341,23 +337,22 @@ function displayCarsInTable(cars) {
 
 async function openCarEditModal(carId) {
     try {
-        const response = await fetch(`http://localhost:5000/cars/${carId}`);
+        const response = await fetch(`http://localhost:5034/api/Car/GetCarById?carId=${carId}`);
         if (!response.ok) throw new Error('Car Not Found');
         const car = await response.json();
 
-        console.log(carId);
-
         // Populate modal fields with the car data
-        document.getElementById('editCarId').value = car.id;
+        document.getElementById('editCarId').value = car.carId;
+        document.getElementById('editCarId').value = car.imagePath;
         document.getElementById('editCarBrand').value = car.brand;
-        document.getElementById('editCarName').value = car.name;
-        document.getElementById('editCarRegNo').value = car.regNo;
-        document.getElementById('editCarYear').value = car.year;
+        document.getElementById('editCarName').value = car.model;
         document.getElementById('editCarGearType').value = car.gearType;
         document.getElementById('editCarSeatCount').value = car.seatCount;
         document.getElementById('editCarFuelType').value = car.fuelType;
         document.getElementById('editCarMileage').value = car.mileage;
-        document.getElementById('editCarDayPrice').value = car.dayPrice;
+        document.getElementById('editCarYear').value = car.year;
+        document.getElementById('editCarRegNo').value = car.regNo;        
+        document.getElementById('editCarDayPrice').value = car.dailyPrice;
 
 
         // Show the modal
@@ -370,45 +365,62 @@ async function openCarEditModal(carId) {
 }
 
 // Save changes to the car
-document.getElementById('saveCarChangesBtn').addEventListener('click', async function () {
+document.getElementById('saveCarChangesBtn').addEventListener('click', async function () {  // Prevent default form submission if inside a form
+
     const carId = document.getElementById('editCarId').value;
+    console.log(carId)
     const updatedCarData = {
-        brand: document.getElementById('editCarBrand').value,
-        name: document.getElementById('editCarName').value,
         gearType: document.getElementById('editCarGearType').value,
         seatCount: document.getElementById('editCarSeatCount').value,
         fuelType: document.getElementById('editCarFuelType').value,
-        regNo: document.getElementById('editCarRegNo').value,
-        year: document.getElementById('editCarYear').value,
         mileage: document.getElementById('editCarMileage').value,
-        dayPrice: document.getElementById('editCarDayPrice').value,
-
+        year: document.getElementById('editCarYear').value,
+        dailyPrice: document.getElementById('editCarDayPrice').value
     };
 
+    // Ensure no fields are empty before making the update request
+    if (!Object.values(updatedCarData).every(value => value.trim() !== '')) {
+        alert('Please fill out all required fields.');
+        return;
+    }
+  
+
     try {
-        const response = await fetch(`http://localhost:5000/cars/${carId}`, {
-            method: 'PATCH',
+        const response = await fetch(`http://localhost:5034/api/Car/UpdateCarById/${carId}`, {
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedCarData)
         });
-        if (!response.ok) throw new Error('Failed to save changes');
+
+        if (!response.ok) {
+            const errorResponse = await response.json();  // Get the detailed error response from the server
+            console.error('Error response from server:', errorResponse);
+            throw new Error('Failed to save changes');
+        }
+
+        // Log successful response if needed
+        const responseData = await response.json();
+        console.log('Car updated successfully:', responseData);
 
         // Close the modal after successful update
         const modal = bootstrap.Modal.getInstance(document.getElementById('editCarModal'));
         modal.hide();
 
-        // Refresh the car list to reflect changes
+        // Refresh the car list to reflect changes (if necessary, update the list after editing)
         fetchCars();
+
         alert('Car details updated successfully!');
     } catch (error) {
         console.error('Error saving car details:', error);
-        alert('Failed to save changes.');
+        alert('Failed to save changes. Please try again later.');
     }
 });
 
+
 async function deleteCar(carId) {
+    console.log(carId)
     try {
-        const response = await fetch(`http://localhost:5000/cars/${carId}`, {
+        const response = await fetch(`http://localhost:5034/api/Car/DeleteById/${carId}`, {
             method: 'DELETE',
         });
 
@@ -424,8 +436,14 @@ async function deleteCar(carId) {
     }
 }
 
+
+
 // Car Table view
 document.addEventListener('DOMContentLoaded', () => {
     fetchCars();
 })
+
+
+
+
 

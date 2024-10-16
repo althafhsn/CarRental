@@ -14,7 +14,7 @@ document.getElementById('signinForm').addEventListener('submit', async function 
     // Fetch the list of users from the server
     async function fetchUsers() {
         try {
-            const response = await fetch('http://localhost:5000/users'); // Assuming your API endpoint
+            const response = await fetch('http://localhost:5034/api/Customer/getAllCustomers'); // Assuming your API endpoint
             if (!response.ok) {
                 throw new Error('Failed to fetch user details');
             }
@@ -31,7 +31,7 @@ document.getElementById('signinForm').addEventListener('submit', async function 
 
     // Call the function to fetch users
     const users = await fetchUsers();
-
+console.log (users);
     // Debugging output
     console.log("Entered NIC/License:", nicOrLicense);
     console.log("Entered Password:", password);
@@ -39,7 +39,7 @@ document.getElementById('signinForm').addEventListener('submit', async function 
 
     // Simulate server-side authentication by matching user details
     const matchedUser = users.find(user => 
-        (user.nic === nicOrLicense || user.license === nicOrLicense) && user.password === encryptPassword(password)
+        (user.nic === nicOrLicense || user.licence === nicOrLicense) && user.password === encryptPassword(password)
     );
 
     console.log(matchedUser);
@@ -47,15 +47,18 @@ document.getElementById('signinForm').addEventListener('submit', async function 
     if (matchedUser) {
         // Store the user ID and details in sessionStorage upon successful login
         sessionStorage.setItem('isAuthenticatedUser', 'true');
-        sessionStorage.setItem('userId', matchedUser.id); // Store the user ID
+        sessionStorage.setItem('userId', matchedUser.customerId); // Store the user ID
         sessionStorage.setItem('userDetails', JSON.stringify(matchedUser)); // Store the entire user details
 
+        alert("NIC or License or Password correct")
+
         // Redirect the user back to the previous page they were on
-        const previousPage = document.referrer || 'index.html'; // Default to home if no previous page
+        const previousPage ='index.html'; // Default to home if no previous page
         window.location.href = previousPage;
     } else {
         // Show error message if no user matched
         // errorMsg.textContent = 'Invalid NIC/License or password.';
         // errorMsg.classList.remove('d-none');
+        alert("NIC or License or Password incorrect")
     }
 });

@@ -1,86 +1,118 @@
-async function fetchAndDisplayCars() {
+// Function to fetch and display cars based on filter criteria
+async function fetchAndDisplayCars(filterCriteria = {}) {
     try {
-        const response = await fetch('http://localhost:5000/cars');
+        const response = await fetch('http://localhost:5034/api/Car/getAllCars');
         if (!response.ok) throw new Error('Failed to fetch car details');
 
         const cars = await response.json();
         const showCarCard = document.getElementById('showCarCard');
         showCarCard.innerHTML = ''; // Clear existing cards
 
-        // Loop through each car and create the card HTML
-        cars.forEach(car => {
-            const cardHTML = `
-                <div class="col">
-                    <div class="card car-card">
-                        <label class="form-label d-none">${car.id}</label>
-                        <div class="col-12">
-                            <img src="${car.image}" class="card-img-top" alt="${car.name}">
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0">${car.brand} ${car.name}</h5>
-                                <span class="dashed-border">${car.year}</span>
+        // Filter cars based on criteria (if any)
+        const filteredCars = cars.filter(car => {
+            const matchesBrand = filterCriteria.brand ? car.brand.toLowerCase() === filterCriteria.brand.toLowerCase() : true;
+            const matchesPrice = filterCriteria.dayPrice ? parseFloat(car.dayPrice) <= parseFloat(filterCriteria.dayPrice) : true;
+
+            return matchesBrand && matchesPrice; // Both brand and price conditions must match
+        });
+
+        // Only display cars if there are filtered results
+        if (filteredCars.length > 0) {
+            // Loop through each filtered car and create the card HTML
+            filteredCars.forEach(car => {
+                const cardHTML = `
+                    <div class="col">
+                        <div class="card car-card">
+                            <label class="form-label d-none">${car.carId}</label>
+                            <div class="col-12">
+                                <img src="${car.imagePath}" class="card-img-top" alt="${car.model}">
                             </div>
-                            <div class="container">
-                                <div class="row text-center car-info-section">
-                                    <div class="col-6 d-flex justify-content-start align-items-center">
-                                        <i class="fas fa-user car-info-icon"></i>
-                                        <span class="p-2">${car.seatCount} People</span>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">${car.brand} ${car.model}</h5>
+                                    <span class="dashed-border">${car.year}</span>
+                                </div>
+                                <div class="container">
+                                    <div class="row text-center car-info-section">
+                                        <div class="col-6 d-flex justify-content-start align-items-center">
+                                            <i class="fas fa-user car-info-icon"></i>
+                                            <span class="p-2">${car.seatCount} People</span>
+                                        </div>
+                                        <div class="col-6 d-flex justify-content-start align-items-center">
+                                            <i class="fas fa-gas-pump"></i>
+                                            <span class="p-2">${car.fuelType}</span>
+                                        </div>
                                     </div>
-                                    <div class="col-6 d-flex justify-content-start align-items-center">
-                                        <i class="fas fa-gas-pump"></i>
-                                        <span class="p-2">${car.fuelType}</span>
+                                    <div class="row text-center car-info-section mt-2">
+                                        <div class="col-6 d-flex justify-content-start align-items-center">
+                                            <i class="fas fa-tachometer-alt car-info-icon"></i>
+                                            <span class="p-2">${car.mileage} km/l</span>
+                                        </div>
+                                        <div class="col-6 d-flex justify-content-start align-items-center">
+                                            <i class="fas fa-cogs"></i>
+                                            <span class="p-2">${car.gearType}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row text-center car-info-section mt-2">
-                                    <div class="col-6 d-flex justify-content-start align-items-center">
-                                        <i class="fas fa-tachometer-alt car-info-icon"></i>
-                                        <span class="p-2">${car.mileage} km/l</span>
+                                <div class="container">
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <h6>${car.dailyPrice}.00 / D</h6>
+                                        <button class="btn btn-primary rent-btn" data-car-id="${car.carId}" data-car-details='${JSON.stringify(car)}'>Rent now</button>
                                     </div>
-                                    <div class="col-6 d-flex justify-content-start align-items-center">
-                                        <i class="fas fa-cogs"></i>
-                                        <span class="p-2">${car.gearType}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="container">
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <h6>${car.dayPrice}.00 / D</h6>
-                                    <button class="btn btn-primary rent-btn" data-car-id="${car.id}" data-car-details='${JSON.stringify(car)}'>Rent now</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
 
-            // Append the card HTML to the container
-            showCarCard.innerHTML += cardHTML;
-        });
-
-        // Attach click event listener to all rent buttons
-        document.querySelectorAll('.rent-btn').forEach(button => {
-            button.addEventListener('click', function (event) {
-                const carDetails = JSON.parse(event.target.getAttribute('data-car-details'));
-                
-                // Check if the user is logged in by checking session storage
-                if (sessionStorage.getItem('isAuthenticatedUser') === 'true') {
-                    // User is authenticated, proceed to open the modal
-                    createAndOpenRentCarModal(carDetails);
-                } else {
-                    // User is not authenticated, redirect to login page
-                    window.location.href = 'signin.html'; // Redirect to login page
-                }
+                // Append the card HTML to the container
+                showCarCard.innerHTML += cardHTML;
             });
-        });
 
+            // Attach click event listener to all rent buttons
+            document.querySelectorAll('.rent-btn').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    const carDetails = JSON.parse(event.target.getAttribute('data-car-details'));
+
+                    // Check if the user is logged in by checking session storage
+                    if (sessionStorage.getItem('isAuthenticatedUser') === 'true') {
+                        // User is authenticated, proceed to open the modal
+                        createAndOpenRentCarModal(carDetails);
+                    } else {
+                        // User is not authenticated, redirect to login page
+                        window.location.href = 'signin.html'; // Redirect to login page
+                    }
+                });
+            });
+        } else {
+            // Optionally, show a message when no cars match the filters
+            showCarCard.innerHTML = '<p>No cars found for the applied filters.</p>';
+            showCarCard.style.color = "red";
+        }
     } catch (error) {
         console.error('Error fetching car details:', error);
     }
 }
 
-// Call the function to fetch and display cars when the page loads
-document.addEventListener('DOMContentLoaded', fetchAndDisplayCars);
+// Filter form event listener
+document.getElementById('filterForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent form submission
+
+    // Get filter criteria from form inputs
+    const filterBrand = document.getElementById('filterBrand').value.trim();
+    const filterPrice = document.getElementById('filterModel').value.trim();
+
+    const filterCriteria = {
+        brand: filterBrand,
+        dayPrice: filterPrice,
+    };
+
+    // Fetch and display cars based on the filter criteria
+    fetchAndDisplayCars(filterCriteria);
+});
+
+
+
 
 
 
@@ -108,14 +140,14 @@ function createAndOpenRentCarModal(carDetails) {
                 <div class="modal-content">
                         
                     <div class="modal-header text-center">
-                        <h5 class="modal-title" id="rentCarModalLabel">${carDetails.brand} ${carDetails.name} (${carDetails.year})</h5>
+                        <h5 class="modal-title" id="rentCarModalLabel">${carDetails.brand} ${carDetails.model} (${carDetails.year})</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <label class="form-label d-none" id="getCarIdForRequest">${carDetails.id}</label>
+                            <label class="form-label d-none" id="getCarIdForRequest">${carDetails.carId}</label>
                             <div class="col-md-6 d-flex justify-content-center align-items-center">
-                                <img id="modalCarImage" src="${carDetails.image}" class="img-fluid" alt="${carDetails.name}">
+                                <img id="modalCarImage" src="${carDetails.imagePath}" class="img-fluid" alt="${carDetails.name}">
                             </div>
                             <div class="col-md-6">
                                 <div class="container">
@@ -180,7 +212,7 @@ function createAndOpenRentCarModal(carDetails) {
     const durationInput = document.getElementById('rentDuration');
     const totalCostInput = document.getElementById('totalCost');
 
-    const dayPrice = carDetails.dayPrice;
+    const dayPrice = carDetails.dailyPrice;
 
     // Set the minimum date for start and end date inputs to today
     startDateInput.setAttribute('min', today);
@@ -210,7 +242,10 @@ function createAndOpenRentCarModal(carDetails) {
     requestForm.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        const carId = carDetails.id;
+        const userId = sessionStorage.getItem('userId');
+        console.log(userId)
+
+        const carId = carDetails.carId;
         const rentStartDate = startDateInput.value;
         const rentEndDate = endDateInput.value;
         const rentDuration = durationInput.value;
@@ -219,38 +254,41 @@ function createAndOpenRentCarModal(carDetails) {
         const rentId = generateId(16);
 
         const newRental = {
-            id: rentId,
+            rentalId: rentId,
             carId: carId,
-            customerId: "fh",
+            customerId: userId,
             startDate: rentStartDate,
             endDate: rentEndDate,
             duration: rentDuration,
-            amount: totalCost,
+            totalPrice: totalCost,
+            action: "pending",
+            status: "active",
+            requestDate: new Date()
         };
-
-        // Send rental request to server (this is where you would send the data)
-        if (!Object.values(newRental).every(value => value.trim() !== '' && value !== null)) {
+console.log(newRental);
+        // Validate that all required fields are filled in properly
+        if (!Object.values(newRental).every(value => value !== null && value !== '' && typeof value !== 'undefined')) {
             alert('Please fill out all required fields.');
             return;
         }
-    
+
         try {
-           
-            const response = await fetch('http://localhost:5000/rentalRequest', {
+            const response = await fetch('http://localhost:5034/api/RentalRequest/addRentalRequest', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newRental)
             });
-    
+
             if (response.ok) {
                 alert('Request sent successfully!');
-                carForm.reset();
+                requestForm.reset(); // Fix: Use requestForm instead of carForm
             } else {
                 throw new Error('Failed to send Request.');
             }
         } catch (error) {
             alert('Request error. Please try again.');
         }
+
 
         // Reset the form
         requestForm.reset();
@@ -267,3 +305,4 @@ function createAndOpenRentCarModal(carDetails) {
 
 // Call the function to fetch and display cars when the page loads
 document.addEventListener('DOMContentLoaded', fetchAndDisplayCars);
+console.log(Date())

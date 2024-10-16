@@ -1,6 +1,6 @@
 async function fetchRentalRequest() {
     try {
-        const response = await fetch('http://localhost:5000/rentalRequest');
+        const response = await fetch('http://localhost:5034/api/RentalRequest/getAllRentalRequests');
         if (!response.ok) { 
             throw new Error('Failed to fetch Request'); 
         }
@@ -27,21 +27,24 @@ function displayRentalRequest(requests) {
 
         row.innerHTML = `
             <td>${index + 1}</td>
-            <td>${request.id}</td>
+            <td>${request.rentalId}</td>
+            <td>${request.requestDate}</td>
             <td><a href="#" class="customer-id-link" data-customer-id="${request.customerId}">${request.customerId}</a></td>
             <td><a href="#" class="car-id-link" data-car-id="${request.carId}">${request.carId}</a></td>
             <td>${request.startDate}</td>
             <td>${request.endDate}</td>
             <td>${request.duration}</td>
-            <td>${request.amount}</td>
-            <td>wddw</td>
-            <td>
-                <button class="btn btn-outline-primary edit-btn" data-request-id="${request.id}">
-                    <i class="fa-solid fa-pen-to-square"></i>
+            <td>${request.totalPrice}</td>
+            <td><button class="btn btn-outline-primary edit-btn" data-request-id="">
+                    <i class="fa-solid fa-check"></i>
                 </button> 
-                <button class="btn btn-outline-danger delete-btn" data-request-id="${request.id}">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
+                <button class="btn btn-outline-danger delete-btn" data-request-id="">
+                    <i class="fa-solid fa-xmark"></i>
+                </button></td>
+            <td>
+                <button class="btn btn-outline-primary edit-btn" data-request-id="">
+                    Return
+                </button> 
             </td>
         `;
 
@@ -69,7 +72,7 @@ function displayRentalRequest(requests) {
 // Function to fetch and display customer details in a modal
 async function openCustomerDetailsModal(userId) {
     try {
-        const response = await fetch(`http://localhost:5000/users/${userId}`);
+        const response = await fetch(`http://localhost:5034/api/Customer/GetCustomerById?customerId=${userId}`);
         if (!response.ok) throw new Error('Failed to fetch customer details');
 
         const customer = await response.json();
@@ -112,7 +115,7 @@ async function openCustomerDetailsModal(userId) {
                    
                       <div class="mb-3">
                         <label value="" disabled selected>Mobile Number</label>
-                        <input type="text" class="form-control" id="editMobileNo" disabled  placeholder="${customer.mobileNo}">
+                        <input type="text" class="form-control" id="editMobileNo" disabled  placeholder="${customer.phone}">
                       </div>
                  
                     <div class="mb-3">
@@ -127,7 +130,7 @@ async function openCustomerDetailsModal(userId) {
                       </div>
                       <div class="col-6">
                         <label value="" disabled selected>License</label>
-                        <input type="text" class="form-control" id="editLicense" disabled placeholder="${customer.license}">
+                        <input type="text" class="form-control" id="editLicense" disabled placeholder="${customer.licence}">
                       </div>
                     </div>
 
@@ -164,7 +167,7 @@ async function openCustomerDetailsModal(userId) {
 // Function to fetch and display car details in a modal
 async function openCarDetailsModal(carId) {
     try {
-        const response = await fetch(`http://localhost:5000/cars/${carId}`);
+        const response = await fetch(`http://localhost:5034/api/Car/GetCarById?carId=${carId}`);
         if (!response.ok) throw new Error('Failed to fetch car details');
 
         const car = await response.json();
@@ -185,7 +188,7 @@ async function openCarDetailsModal(carId) {
                   <div class="col-md-6 d-flex align-items-center mb-3">
                     <div class="form-group w-100 align-items-center">
                       <div class="main-img-preview mb-3">
-                        <img class="thumbnail img-preview" src="${car.image}">
+                        <img class="thumbnail img-preview" src="${car.imagePath}">
                       </div>
                     </div>
                   </div>
@@ -202,7 +205,7 @@ async function openCarDetailsModal(carId) {
                     <div class="col">
                       <div class="mb-3">
                         <label for="editCarBrand" class="form-label border-">Car Modal</label>
-                        <input class="form-control" disabled placeholder="${car.name}" >
+                        <input class="form-control" disabled placeholder="${car.model}" >
                       </div>
                     </div>
 
@@ -242,7 +245,7 @@ async function openCarDetailsModal(carId) {
                       <div class="row mb-3">
                         <div class="col-md-6">
                           <label for="editCarDayPrice" class="form-label border-">Day Price</label>
-                          <input class="form-control" disabled placeholder="${car.dayPrice}" >
+                          <input class="form-control" disabled placeholder="${car.dailyPrice}" >
                         </div>
                         <div class="col-md-6">
                           <label for="editCarHourPrice" class="form-label border-">Hour Price</label>

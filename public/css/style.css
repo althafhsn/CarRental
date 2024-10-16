@@ -83,6 +83,57 @@ p {
   transition: transform 0.3s ease;
 }
 
+.profile {
+  position: relative;
+}
+
+.profile img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+
+}
+ .profile .profile-link {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  background: var(--light);
+  padding: 10px 0;
+  box-shadow: 4px 4px 16px rgb(0, 0, 0, 0.1);
+  border-radius: 10px;
+  width: 160px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .3s ease;
+
+}
+
+.profile .profile-link.show {
+  opacity: 1;
+  pointer-events: visible;
+  top: 100%;
+  background-color: #90afde;
+  color: black;
+}
+
+
+.profile .profile-link a {
+  padding: 10px 16px;
+  display: flex;
+  grid-gap: 10px;
+  font-size: 14px;
+  color: var(--dark);
+  align-items: center;
+  transition: all .3s ease;
+
+}
+
+.profile .profile-link a:hover {
+  background: var(--gray);
+}
+
 
 
 .car-card:hover {
