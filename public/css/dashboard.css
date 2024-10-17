@@ -714,3 +714,4 @@ text-wrap: nowrap;
     border: none; /* Removes all borders */
     border-radius: 20px;
 }
+.card-title{font-family: 'Times New Roman';}

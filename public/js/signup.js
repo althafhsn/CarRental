@@ -85,7 +85,7 @@ async function submitSignup() {
         }
 
         // Submit the data if no duplicates are found
-        const response = await fetch('http://localhost:5034/api/Customer/addCustomer', {
+        const response = await fetch('http://localhost:5034/api/Customer/addCustomer/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userData)

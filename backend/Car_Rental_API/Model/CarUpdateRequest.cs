@@ -2,9 +2,17 @@
 {
     public class CarUpdateRequest
     {
-        public decimal HourlyPrice { get; set; }
-        public decimal DailyPrice { get; set; }
-        public string ImagePath { get; set; }
+       
+
+        public string Brand { get; set; }
+        public string Model { get; set; }
+        public string GearType { get; set; }
         public int SeatCount { get; set; }
+        public string FuelType { get; set; }
+        public int Mileage { get; set; }
+
+        public int Year { get; set; }
+        public string RegNo { get; set; }
+        public decimal DailyPrice { get; set; }
     }
 }

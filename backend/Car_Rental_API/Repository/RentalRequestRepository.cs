@@ -17,18 +17,19 @@ namespace Car_Rental_API.Repository
         {
             try
             {
-                string insertQuery = @"INSERT INTO RentalRequests (RentalId,CustomerID, CarID, StartDate, EndDate, TotalPrice, Action, Status, RequestDate)
-                                       VALUES (@rentalId,@customerId, @carId, @startDate, @endDate,@totalPrice,@action, @status, @requestDate);";
+                string insertQuery = @"INSERT INTO RentalRequests (RentalId,CarId, CustomerId, StartDate, EndDate,Duration, TotalPrice, Action, Status, RequestDate)
+                                       VALUES (@rentalId,@carId, @customerId, @startDate, @endDate,@duration,@totalPrice,@action, @status, @requestDate);";
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
                     using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
                         command.Parameters.AddWithValue("@rentalId", rentalRequest.RentalId);
-                        command.Parameters.AddWithValue("@customerId", rentalRequest.CustomerId);
                         command.Parameters.AddWithValue("@carId", rentalRequest.CarId);
+                        command.Parameters.AddWithValue("@customerId", rentalRequest.CustomerId);
                         command.Parameters.AddWithValue("@startDate", rentalRequest.StartDate);
                         command.Parameters.AddWithValue("@endDate", rentalRequest.EndDate);
+                        command.Parameters.AddWithValue("@duration", rentalRequest.Duration);
                         command.Parameters.AddWithValue("@totalPrice", rentalRequest.TotalPrice);
                         command.Parameters.AddWithValue("@action", rentalRequest.Action);
                         command.Parameters.AddWithValue("@status", rentalRequest.Status);
@@ -64,15 +65,16 @@ namespace Car_Rental_API.Repository
 
                             retalList.Add(new RentalRequest()
                             {
-                               RentalId = reader.GetInt32(0),
-                               CustomerId = reader.GetInt32(1),
-                               CarId = reader.GetInt32(2),
+                               RentalId = reader.GetString(0),
+                               CarId = reader.GetString(1),
+                               CustomerId = reader.GetString(2),
                                StartDate = reader.GetDateTime(3),
                                EndDate = reader.GetDateTime(4),
-                               TotalPrice = reader.GetDecimal(5),
-                               Action = reader.GetString(6),
-                               Status = reader.GetString(7),
-                               RequestDate = reader.GetDateTime(8)
+                               Duration = reader.GetInt32(5),
+                               TotalPrice = reader.GetDecimal(6),
+                               Action = reader.GetString(7),
+                               Status = reader.GetString(8),
+                               RequestDate = reader.GetDateTime(9)
                             });
 
                         }
@@ -84,9 +86,9 @@ namespace Car_Rental_API.Repository
             return retalList;
         }
 
-        public RentalRequest GetRentalRequestById(int id)
+        public RentalRequest GetRentalRequestById(string rentalId)
         {
-            string getQuery = @"SELECT * FROM RentalRequests WHERE RentalId = @id";
+            string getQuery = @"SELECT * FROM RentalRequests WHERE RentalId = @rentalId";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -94,22 +96,23 @@ namespace Car_Rental_API.Repository
                 using (SqlCommand cmd = new SqlCommand(getQuery, conn))
                 {
 
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@rentalId", rentalId);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                         {
                             return new RentalRequest()
                             {
-                                RentalId = reader.GetInt32(0),
-                                CustomerId = reader.GetInt32(1),
-                                CarId = reader.GetInt32(2),
+                                RentalId = reader.GetString(0),
+                                CarId = reader.GetString(1),
+                                CustomerId = reader.GetString(2),
                                 StartDate = reader.GetDateTime(3),
                                 EndDate = reader.GetDateTime(4),
-                                TotalPrice = reader.GetDecimal(5),
-                                Action = reader.GetString(6),
-                                Status = reader.GetString(7),
-                                RequestDate = reader.GetDateTime(8)
+                                Duration = reader.GetInt32(5),
+                                TotalPrice = reader.GetDecimal(6),
+                                Action = reader.GetString(7),
+                                Status = reader.GetString(8),
+                                RequestDate = reader.GetDateTime(9)
                             };
 
                         }

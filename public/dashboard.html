@@ -13,29 +13,34 @@
   <title>Dashboard</title>
 </head>
 
-<body>
+<body >
 
   <!-- SIDE-BAR  -->
-  <section id="side-bar">
-    <a href="#" class="brand text-decoration-none"><i class="fa-solid fa-face-smile icon"></i> Admin Site </a>
+  <section id="side-bar" >
+    <a href="#" class="brand text-decoration-none"><i class="fa-solid fa-face-smile icon"></i><span class="sidebar" style=" font-size: 32px;">Admin Site</span>   </a>
     <ul class="side-manu">
-      <li><a href="#" class="active text-decoration-none" onclick="showSection('dashboard-section', this)"><i
-            class="fa-solid fa-table-columns icon"></i> Dashboard </a></li>
+      <li><a href="#" class="active text-decoration-none" onclick="showSection('dashboard-section', this)"><i 
+            class="fa-solid fa-table-columns icon"></i><span class="sidebar">Dashboard</span> </a></li>
       <li><a href="#" class="text-decoration-none" onclick="showSection('car-section', this)"><i
-            class="fa-solid fa-car icon"></i> Cars</a>
+            class="fa-solid fa-car icon"></i><span class="sidebar">Cars</span>  </a>
       </li>
       <li><a href="#" class="text-decoration-none" onclick="showSection('customer-section', this)"><i
             class="fa-solid fa-users icon"></i>
-          Customer</a></li>
+            <span class="sidebar">Customer</span>  </a></li>
       <li><a href="#" class="text-decoration-none" onclick="showSection('report-section', this)"><i
-            class="fa-solid fa-square-poll-vertical icon"></i> Reports</a></li>
+            class="fa-solid fa-square-poll-vertical icon"></i><span class="sidebar">Reports</span> </a></li>
     </ul>
   </section>
+  <style>
+    .sidebar{font-family: 'Times New Roman';
+              font-size: 18px;}
+  
+  </style>
   <!-- SIDE-BAR  -->
 
   <!-- NAV-BAR -->
   <section id="content">
-    <nav>
+    <nav style="background-color:#1775F1;">
       <i class="fa-solid fa-bars toggle-side-bar"></i>
       <form action="#">
         <div class="form-group">
@@ -460,6 +465,183 @@
             <li><a href="#" class="active text-decoration-none">Customers</a></li>
           </ul>
         </section>
+           <!-- Cards Section -->
+            <style>
+     .card{border: 2px rgb(5, 5, 5) solid;
+   height: 125px;
+    
+  padding: 10px;
+  box-shadow: 5px 10px;
+}
+.card:hover{cursor: pointer;
+background-color: #1775F1;;
+color: aliceblue;
+
+box-shadow: 5px 10px rgb(12, 12, 12) ;
+
+}
+            </style>
+                    <div class="container mt-4" >
+                        <div class="row">
+                            <div class="col-md-3" >
+                                <div class="card" data-bs-toggle="modal" data-bs-target="#availableCarsModal">
+                                    <div class="card-body" >
+                                        <h5 class="card-title">Available Cars</h5>
+                                        <p id ="availableCarsCount" style="text-align: center;">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card" data-bs-toggle="modal" data-bs-target="#rentedCarsModal">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Rented Cars</h5>
+                                        <p id="rentedCars" class="card-text"style="text-align: center;">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card" data-bs-toggle="modal" data-bs-target="#overdueCarsModal">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Overdue Cars</h5>
+                                        <p id="overdueCars" class="card-text">Loading...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card" data-bs-toggle="modal" data-bs-target="#totalRevenueModal">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Revenue</h5>
+                                        <p id="totalRevenue" class="card-text">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+          
+        
+            <!-- Modals -->
+            
+            <!-- Available Cars Modal -->
+            <div class="modal fade" id="availableCarsModal" tabindex="-1" aria-labelledby="availableCarsModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="availableCarsModalLabel">Available Cars</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <table class="table table-striped">
+                              <thead>
+                                  <tr>
+                                      <th>No</th>
+                                      <th>Car ID</th>
+                                      <th>Brand</th>
+                                      <th>Model</th>
+                                      <th>Price</th>
+                                  </tr>
+                              </thead>
+                              <tbody id="availableCars">
+                                  <!-- Populated by JavaScript -->
+                              </tbody>
+                          </table>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Rented Cars Modal -->
+            <div class="modal fade" id="rentedCarsModal" tabindex="-1" aria-labelledby="rentedCarsModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="rentedCarsModalLabel">Rented Cars</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <table class="table table-striped">
+                              <thead>
+                                  <tr>
+                                      <th>No</th>
+                                      <th>Rented ID</th>
+                                      <th>Car ID</th>
+                                      <th>Customer ID</th>
+                                      <th>Rented Date</th>
+                                      <th>Return Date</th>
+                                  </tr>
+                              </thead>
+                              <tbody id="rentalRequestsTableBody">
+                                  <!-- Rows populated by JavaScript -->
+                              </tbody>
+                          </table>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Overdue Cars Modal -->
+            <div class="modal fade" id="overdueCarsModal" tabindex="-1" aria-labelledby="overdueCarsModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="overdueCarsModalLabel">Overdue Cars</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Car Name</th>
+                                        <th>Status</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>Car Model E</td>
+                                        <td>Overdue</td>
+                                        <td>$90</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td>Car Model F</td>
+                                        <td>Overdue</td>
+                                        <td>$100</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Total Revenue Modal -->
+            <div class="modal fade" id="totalRevenueModal" tabindex="-1" aria-labelledby="totalRevenueModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="totalRevenueModalLabel">Total Revenue</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <table class="table table-striped" id="revenueTable">
+                              <thead>
+                                  <tr>
+                                      <th>Car Brand</th>
+                                      <th>Total Revenue</th>
+                                  </tr>
+                              </thead>
+                              <tbody id="revenueBody">
+                                  <!-- Revenue data will be injected here -->
+                              </tbody>
+                          </table>
+                      </div>
+                    </div>
+                </div>
+            </div>
       </div>
 
     </section>
@@ -467,6 +649,8 @@
   </section>
 
   <!-- MAIN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-3hmdHj24N+PlVwZ2elZ9V+YoXK8aRcpC9UUSfM/a1Hh4kzUplE+IZWhVYxsH4NSM" crossorigin="anonymous"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
     integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
     crossorigin="anonymous"></script>

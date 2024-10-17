@@ -22,8 +22,8 @@ namespace Car_Rental_API.Repository
             try
             {
                 // Removed CarId from the insert query since it's an identity column
-                string insertQuery = @"INSERT INTO Customers (CustomerId,FirstName,LastName,ImagePath,Phone,Address,Password,Email,NIC,Licence)
-                                       VALUES (@customerId,@firstName,@lastName,@imagePath,@phone,@address,@password,@email,@nIC,@licence);";
+                string insertQuery = @"INSERT INTO Customers (CustomerId,FirstName,LastName,Email,Phone,Address,Licence,NIC,Password)
+                                       VALUES (@customerId,@firstName,@lastName,@email,@phone,@address,@licence,@nic,@password);";
                 // Use _connectionString passed from the constructor
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
@@ -31,16 +31,15 @@ namespace Car_Rental_API.Repository
                     using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
                         // Bind the parameters
-                        command.Parameters.AddWithValue("@customerId",customer.CustomerId);
+                        command.Parameters.AddWithValue("@customerId", customer.CustomerId);
                         command.Parameters.AddWithValue("@firstName",customer.FirstName);
                         command.Parameters.AddWithValue("@lastName",customer.LastName);
-                        command.Parameters.AddWithValue("@imagePath",customer.ImagePath);
+                        command.Parameters.AddWithValue("@email",customer.Email);
                         command.Parameters.AddWithValue("@phone",customer.Phone);
                         command.Parameters.AddWithValue("@address",customer.Address);
-                        command.Parameters.AddWithValue("@password",customer.Password);
-                        command.Parameters.AddWithValue("@email",customer.Email);
-                        command.Parameters.AddWithValue("@nIC",customer.NIC);
-                        command.Parameters.AddWithValue("@licence", customer.Licence);
+                        command.Parameters.AddWithValue("@licence",customer.Licence);
+                        command.Parameters.AddWithValue("@nic",customer.NIC);
+                        command.Parameters.AddWithValue("@password", customer.Password);
 
 
                         command.ExecuteNonQuery(); // Execute the query
@@ -74,16 +73,15 @@ namespace Car_Rental_API.Repository
 
                             customers.Add(new Customer()
                             {
-                                CustomerId = int.Parse(reader.GetString(0)),
+                                CustomerId = reader.GetString(0),
                                 FirstName = reader.GetString(1),
                                 LastName = reader.GetString(2),
-                                ImagePath = reader.GetString(3),
+                                Email = reader.GetString(3),
                                 Phone = reader.GetString(4),
                                 Address = reader.GetString(5),
-                                Password = reader.GetString(6),
-                                Email = reader.GetString(7),
-                                NIC = reader.GetString(8),
-                                Licence = reader.GetString(9)
+                                Licence = reader.GetString(6),
+                                NIC = reader.GetString(7),
+                                Password = reader.GetString(8)
                             });
 
                         }
@@ -95,9 +93,9 @@ namespace Car_Rental_API.Repository
             return customers;
         }
 
-        public Customer GetCustomerById(int id)
+        public Customer GetCustomerById(string customerId)
         {
-            string getQuery = @"SELECT * FROM Customers WHERE CustomerId = @id";
+            string getQuery = @"SELECT * FROM Customers WHERE CustomerId = @customerId";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -105,23 +103,22 @@ namespace Car_Rental_API.Repository
                 using (SqlCommand cmd = new SqlCommand(getQuery, conn))
                 {
 
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@customerId", customerId);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                         {
                             return new Customer()
                             {
-                                CustomerId = int.Parse(reader.GetString(0)),
+                                CustomerId = reader.GetString(0),
                                 FirstName = reader.GetString(1),
                                 LastName = reader.GetString(2),
-                                ImagePath = reader.GetString(3),
+                                Email = reader.GetString(3),
                                 Phone = reader.GetString(4),
                                 Address = reader.GetString(5),
-                                Password = reader.GetString(6),
-                                Email = reader.GetString(7),
-                                NIC = reader.GetString(8),
-                                Licence = reader.GetString(9)
+                                Licence = reader.GetString(6),
+                                NIC = reader.GetString(7),
+                                Password = reader.GetString(8)
                             };
 
                         }
@@ -138,25 +135,23 @@ namespace Car_Rental_API.Repository
 
         }
 
-        public UpdateCustomerRequest UpdateCustomer(int id,UpdateCustomerRequest updateCustomerRequest)
+        public UpdateCustomerRequest UpdateCustomer(string customerId, UpdateCustomerRequest updateCustomerRequest)
         {
-            var cus = GetCustomerById(id);
-            string updateQuery = @"UPDATE Customers SET FirstName=@firstName,LastName=@lastName,ImagePath=@imagePath,Phone=@phone,Address=@address,Password=@password,Email=@email,NIC=@nIC,Licence=@licence WHERE CustomerId= @id";
+            var cus = GetCustomerById(customerId);
+            string updateQuery = @"UPDATE Customers SET FirstName=@firstName,LastName=@lastName,Email=@email,Phone=@phone,Address=@address,Licence=@licence,NIC=@nic WHERE CustomerId= @customerId";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
                 using (SqlCommand command = new SqlCommand(updateQuery, conn))
                 {
-                    command.Parameters.AddWithValue("@id", id);
+                    command.Parameters.AddWithValue("@customerId", customerId);
                     command.Parameters.AddWithValue("@firstName", updateCustomerRequest.FirstName);
                     command.Parameters.AddWithValue("@lastName", updateCustomerRequest.LastName);
-                    command.Parameters.AddWithValue("@imagePath", updateCustomerRequest.ImagePath);
+                    command.Parameters.AddWithValue("@email", updateCustomerRequest.Email);
                     command.Parameters.AddWithValue("@phone", updateCustomerRequest.Phone);
                     command.Parameters.AddWithValue("@address", updateCustomerRequest.Address);
-                    command.Parameters.AddWithValue("@password", updateCustomerRequest.Password);
-                    command.Parameters.AddWithValue("@email", updateCustomerRequest.Email);
-                    command.Parameters.AddWithValue("@nIC", updateCustomerRequest.NIC);
                     command.Parameters.AddWithValue("@licence", updateCustomerRequest.Licence);
+                    command.Parameters.AddWithValue("@nic", updateCustomerRequest.NIC);
                     command.ExecuteNonQuery();
 
 
@@ -165,26 +160,32 @@ namespace Car_Rental_API.Repository
             return updateCustomerRequest;
         }
 
-        public void DeleteCustomer(int id)
+        public void DeleteCustomer(string customerId)
         {
-            try
+            string deleteQuery = @"DELETE FROM Customers WHERE CustomerId=@customerId"; // Corrected SQL query
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                string deleteQuery = @"DELETE Customers FROM Customers WHERE CustomerId=@id";
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
                 {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
+                    cmd.Parameters.AddWithValue("@customerId", customerId);
+
+                    // ExecuteNonQuery returns the number of affected rows
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
                     {
-                        cmd.Parameters.AddWithValue("@id", id);
-                        cmd.ExecuteNonQuery();
-                        Console.WriteLine("Customer deleted successfully");
+                        // Customer was deleted
+                        Console.WriteLine("Customer deleted successfully.");
+                    }
+                    else
+                    {
+                        // No customer found with the provided ID
+                        Console.WriteLine("Customer ID not found. No deletion occurred.");
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+
         }
 
 

@@ -28,9 +28,9 @@ function displayUsersInTable(users) {
             <td>${user.customerId}</td>
             <td>${user.firstName}</td>
             <td>${user.lastName}</td>
-            <td>${user.address}</td>
             <td>${user.email}</td>
             <td>${user.phone}</td>
+            <td>${user.address}</td>
             <td>${user.licence}</td>
             <td>${user.nic}</td>
             <td>
@@ -61,6 +61,7 @@ function displayUsersInTable(users) {
             deleteUser(userId);
         });
     });
+
 }
 
 // Function to run after DOM is fully loaded
@@ -82,9 +83,9 @@ async function openUserEditModal(userId) {
         document.getElementById('editUserId').value = user.customerId;
         document.getElementById('editFirstName').value = user.firstName;
         document.getElementById('editLastName').value = user.lastName;
-        document.getElementById('editEmail').value = user.email;
         document.getElementById('editMobileNo').value = user.phone;
         document.getElementById("editAddress").value = user.address;
+        document.getElementById('editEmail').value = user.email;
         document.getElementById('editNIC').value = user.nic;
         document.getElementById('editLicense').value = user.licence;
 
@@ -102,15 +103,15 @@ document.getElementById('saveUserChangesBtn').addEventListener('click', async fu
     const updatedUserData = {
         firstName: document.getElementById('editFirstName').value,
         lastName: document.getElementById('editLastName').value,
-        email: document.getElementById('editEmail').value,
         phone: document.getElementById('editMobileNo').value,
         address: document.getElementById("editAddress").value,
-        licence: document.getElementById('editLicense').value,
-        nic: document.getElementById('editNIC').value
+        email: document.getElementById('editEmail').value,
+        nic: document.getElementById('editNIC').value,
+        licence: document.getElementById('editLicense').value
     };
-
+console.log(userId);
     try {
-        const response = await fetch(`http://localhost:5034/api/Customer/UpdateCustomerById/${userId}`, {
+        const response = await fetch(`http://localhost:5034/api/Customer/UpdateCustomerById?customerId=${userId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedUserData)
@@ -129,19 +130,21 @@ document.getElementById('saveUserChangesBtn').addEventListener('click', async fu
   
         alert('Failed to save changes. Please try again later.');
     }
+    window.location.reload();
+
 });
 
 // Function to delete a user
 async function deleteUser(userId) {
     try {
-        const response = await fetch(`http://localhost:5034/api/Customer/DeleteById/${userId}`, {
+        const response = await fetch(`http://localhost:5034/api/Customer/DeleteById?customerId=${userId}`, {
             method: 'DELETE',
         });
 
         if (!response.ok) {
             throw new Error(`Failed to delete user (status: ${response.status})`);
         }
-
+console.log(userId);
         alert('User deleted successfully');
         fetchUsers(); // Refresh the user table after deletion
     } catch (error) {

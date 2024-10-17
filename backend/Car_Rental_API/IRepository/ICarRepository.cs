@@ -8,8 +8,8 @@ namespace Car_Rental_API.IRepository
     {
         Car CreateCar(Car car);
         ICollection<Car> GetCars();
-        Car GetCarById(int id);
-        CarUpdateRequest UpdateCar(int carId, CarUpdateRequest carUpdateRequest);
-        void DeleteCar(int id);
+        Car GetCarById(string id);
+        CarUpdateRequest UpdateCar(string carId, CarUpdateRequest carUpdateRequest);
+        void DeleteCar(string id);
     }
 }

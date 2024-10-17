@@ -29,6 +29,16 @@ namespace Car_Rental_API
             builder.Services.AddSingleton<IRentalRequestRepository>(provider => new RentalRequestRepository(databaseConnectionString));
             builder.Services.AddSingleton<ICarBrand>(provider => new CarBrandRepository(databaseConnectionString));
 
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddDefaultPolicy(pol =>
+                {
+                    pol.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             // Initialize the database
@@ -40,6 +50,8 @@ namespace Car_Rental_API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseCors();
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 
