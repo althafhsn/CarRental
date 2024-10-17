@@ -8,6 +8,7 @@ window.onload = function () {
     if (isAuthenticated !== "true") {
         window.location.href = "./adminLogin.html";
     }
+
 };
 
 document.getElementById("logoutButton").addEventListener('click', () => {
@@ -211,28 +212,24 @@ async function fetchAvailableCars() {
         // Fetch all cars from the API
         const carsResponse = await fetch('http://localhost:5034/api/Car/getAllCars'); // Replace with your actual API endpoint
         const cars = await carsResponse.json();
-        console.log(cars);
         // Fetch all rental requests from the API
         const rentalRequestsResponse = await fetch('http://localhost:5034/api/RentalRequest/getAllRentalRequests'); // Replace with your actual API endpoint
         const rentalRequests = await rentalRequestsResponse.json();
-        console.log(rentalRequests);
         // Get all rented car IDs
         const rentedCarIds = rentalRequests.map(request => request.carId); // Assuming carId is the property name in rental requests
-        console.log(rentedCarIds);
         // Filter out available cars
         const availableCars = cars.filter(car => !rentedCarIds.includes(car.carId)); // Assuming id is the property name in car objects
-        console.log(availableCars);
         // Display the available cars in a table
         displayAvailableCars(availableCars);
 
-        
-            const availableCarsCardText = document.getElementById('availableCarsCount');
-            
-          
-        
-            // Update the card text with the total number of available cars
-            availableCarsCardText.innerText = availableCars.length;
-        
+
+        const availableCarsCardText = document.getElementById('availableCarsCount');
+
+
+
+        // Update the card text with the total number of available cars
+        availableCarsCardText.innerText = availableCars.length;
+
     } catch (error) {
         console.error('Error fetching available cars:', error);
     }
@@ -310,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     // API endpoint for fetching rental requests
     const apiUrl = ('http://localhost:5034/api/RentalRequest/getAllRentalRequests');
-    const carApiUrl =('http://localhost:5034/api/Car/getAllCars');
+    const carApiUrl = ('http://localhost:5034/api/Car/getAllCars');
 
     // Function to fetch data from API and calculate total revenue
     async function fetchRentalRequestsAndCalculateRevenue() {
@@ -318,9 +315,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(apiUrl); // Fetch the data
             const rentalRequests = await response.json(); // Convert response to JSON
 
-              // Fetch cars
-              const carsResponse = await fetch(carApiUrl);
-              const cars = await carsResponse.json();
+            // Fetch cars
+            const carsResponse = await fetch(carApiUrl);
+            const cars = await carsResponse.json();
 
             // Filter approved rental requests
             const approvedRequests = rentalRequests.filter(request => request.action === 'pending');
@@ -330,48 +327,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Display total revenue
             document.getElementById('totalRevenue').innerText = totalRevenue.toFixed(2); // Assuming you want to display it with 2 decimal places
-        
-           
- 
-             // Create a map to correlate car IDs with their brands
-             const carBrandMap = {};
-             cars.forEach(car => {
-                 carBrandMap[car.carId] = car.brand; // Assuming each car has an 'id' and 'brand' property
-             });
- 
-             // Group total revenue by car brand
-             const revenueByBrand = {};
- 
-             rentalRequests.forEach(request => {
-                 if (request.action === 'pending') {
-                     const carId = request.carId; // Assuming this field exists in the rental request
-                     const totalPrice = request.totalPrice; // Assuming this field exists in the rental request
-                     const brand = carBrandMap[carId]; // Get brand from the map
- 
-                     // If the brand is not in the revenueByBrand object, initialize it
-                     if (!revenueByBrand[brand]) {
-                         revenueByBrand[brand] = 0;
-                     }
- 
-                     // Add the total price to the corresponding brand
-                     revenueByBrand[brand] += totalPrice;
-                 }
-             });
- 
-             // Clear existing rows in the table
-             const revenueBody = document.getElementById('revenueBody');
-             revenueBody.innerHTML = '';
- 
-             // Populate the table with revenue data
-             for (const brand in revenueByBrand) {
-                 const row = document.createElement('tr');
-                 row.innerHTML = `
+
+
+
+            // Create a map to correlate car IDs with their brands
+            const carBrandMap = {};
+            cars.forEach(car => {
+                carBrandMap[car.carId] = car.brand; // Assuming each car has an 'id' and 'brand' property
+            });
+
+            // Group total revenue by car brand
+            const revenueByBrand = {};
+
+            rentalRequests.forEach(request => {
+                if (request.action === 'pending') {
+                    const carId = request.carId; // Assuming this field exists in the rental request
+                    const totalPrice = request.totalPrice; // Assuming this field exists in the rental request
+                    const brand = carBrandMap[carId]; // Get brand from the map
+
+                    // If the brand is not in the revenueByBrand object, initialize it
+                    if (!revenueByBrand[brand]) {
+                        revenueByBrand[brand] = 0;
+                    }
+
+                    // Add the total price to the corresponding brand
+                    revenueByBrand[brand] += totalPrice;
+                }
+            });
+
+            // Clear existing rows in the table
+            const revenueBody = document.getElementById('revenueBody');
+            revenueBody.innerHTML = '';
+
+            // Populate the table with revenue data
+            for (const brand in revenueByBrand) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
                      <td>${brand}</td>
                      <td>${revenueByBrand[brand].toFixed(2)}</td> <!-- Display with 2 decimal places -->
                  `;
-                 revenueBody.appendChild(row);
-             }
-        
+                revenueBody.appendChild(row);
+            }
+
         } catch (error) {
             console.error('Error fetching rental requests:', error);
         }
@@ -383,7 +380,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // Call the function to fetch available cars
-fetchAvailableCars();
+
+
 
 
 

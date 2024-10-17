@@ -91,22 +91,7 @@ namespace Car_Rental_API.Database
             RequestDate DATETIME DEFAULT GETDATE(),
             FOREIGN KEY (CustomerId) REFERENCES Customers(CustomerId), 
             FOREIGN KEY (CarId) REFERENCES Cars(CarId)
-        );
-
-        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='CarBrand' AND xtype='U') 
-        CREATE TABLE CarBrand (
-            BrandId NVARCHAR(50) PRIMARY KEY,
-            BrandName NVARCHAR(50) NOT NULL
-        );
-
-        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='CarModel' AND xtype='U') 
-        CREATE TABLE CarModel (
-            ModelId NVARCHAR(50) PRIMARY KEY,
-            ModelName NVARCHAR(50) NOT NULL,
-            BrandId NVARCHAR(50),
-            FOREIGN KEY (BrandId) REFERENCES CarBrand(BrandId)
-        );
-          ";
+        );";
 
             // Correct insert query for Cars
             //string insertQuery = @"INSERT INTO Cars (CarId, RegNo, Brand, Model, HourlyPrice, DailyPrice, ImagePath, SeatCount, FuelType)

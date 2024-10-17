@@ -4,11 +4,11 @@ using Microsoft.Data.SqlClient;
 
 namespace Car_Rental_API.Repository
 {
-    public class RentalRequestRepository:IRentalRequestRepository
+    public class RentalRequestRepository : IRentalRequestRepository
 
     {
         private readonly string _connectionString;
-         public RentalRequestRepository(string connectionString)
+        public RentalRequestRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
@@ -65,16 +65,16 @@ namespace Car_Rental_API.Repository
 
                             retalList.Add(new RentalRequest()
                             {
-                               RentalId = reader.GetString(0),
-                               CarId = reader.GetString(1),
-                               CustomerId = reader.GetString(2),
-                               StartDate = reader.GetDateTime(3),
-                               EndDate = reader.GetDateTime(4),
-                               Duration = reader.GetInt32(5),
-                               TotalPrice = reader.GetDecimal(6),
-                               Action = reader.GetString(7),
-                               Status = reader.GetString(8),
-                               RequestDate = reader.GetDateTime(9)
+                                RentalId = reader.GetString(0),
+                                CarId = reader.GetString(1),
+                                CustomerId = reader.GetString(2),
+                                StartDate = reader.GetDateTime(3),
+                                EndDate = reader.GetDateTime(4),
+                                Duration = reader.GetInt32(5),
+                                TotalPrice = reader.GetDecimal(6),
+                                Action = reader.GetString(7),
+                                Status = reader.GetString(8),
+                                RequestDate = reader.GetDateTime(9)
                             });
 
                         }
@@ -128,5 +128,22 @@ namespace Car_Rental_API.Repository
             return null;
 
         }
+        public bool UpdateRentalRequestStatus(string rentalId, string status)
+        {
+            string updateQuery = @"UPDATE RentalRequests SET Status = @status WHERE RentalId = @rentalId";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@status", status);
+                    cmd.Parameters.AddWithValue("@rentalId", rentalId);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0;  // Return true if update is successful
+                }
+            }
+        }
     }
-}
+}   

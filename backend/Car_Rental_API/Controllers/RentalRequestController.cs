@@ -1,5 +1,6 @@
 ﻿using Car_Rental_API.Entity;
 using Car_Rental_API.IRepository;
+using Car_Rental_API.Model;
 using Car_Rental_API.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -60,6 +61,32 @@ namespace Car_Rental_API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("updateStatus")]
+        public IActionResult UpdateRentalRequestStatus([FromBody] UpdateStatusRequestcs updateRequest)
+        {
+            if (updateRequest == null || string.IsNullOrEmpty(updateRequest.RentalId) || string.IsNullOrEmpty(updateRequest.Status))
+            {
+                return BadRequest("Invalid request data");
+            }
+
+            try
+            {
+                var isUpdated = rentalRequestRepository.UpdateRentalRequestStatus(updateRequest.RentalId, updateRequest.Status);
+                if (isUpdated)
+                {
+                    return Ok(new { message = "Rental request status updated successfully" });
+                }
+                else
+                {
+                    return NotFound("Rental request not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }
