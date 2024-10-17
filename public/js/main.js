@@ -42,6 +42,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+
+
+
+
+
 // Function to open the Edit User modal
 function openEditUserModal() {
     // Get the user ID from sessionStorage
@@ -85,7 +90,7 @@ function openEditUserModal() {
 
 // Function to save the edited user details
 document.getElementById('saveUserChangesBtn').addEventListener('click', async function (e) {
-    e.preventDefault();  // Prevent form submission
+    // e.preventDefault();  // Prevent form submission
 
     const userId = document.getElementById('editUserId').value;
     const updatedUserData = {
@@ -105,7 +110,7 @@ document.getElementById('saveUserChangesBtn').addEventListener('click', async fu
     }
 
     try {
-        const response = await fetch(`http://localhost:5034/api/Customer/UpdateCustomerById/${userId}`, {
+        const response = await fetch(`http://localhost:5034/api/Customer/UpdateCustomerById?customerId=${userId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedUserData)
@@ -178,4 +183,78 @@ async function checkForCustomerOverdueRentals() {
 document.addEventListener('DOMContentLoaded',()=>{
     setInterval(checkForCustomerOverdueRentals, 24 * 60 * 60 * 1000); // Check every 24 hours
 
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const rentalApiUrl = ('http://localhost:5034/api/RentalRequest/getAllRentalRequests'); // Replace with your rental request API URL
+    const carsApiUrl = ('http://localhost:5034/api/Car/getAllCars') // Replace with your cars API URL
+    const viewHistoryLink = document.getElementById('viewHistory');
+    const rentalHistoryBody = document.getElementById('rentalHistoryBody');
+
+    // Get the logged-in user ID from session storage
+    const loggedInUserId = sessionStorage.getItem('userId'); // Ensure the userId is stored in session storage
+console.log(loggedInUserId);
+    // Function to fetch and display rental history
+    async function fetchRentalHistory() {
+        try {
+            // Fetch rental requests
+            const rentalResponse = await fetch(rentalApiUrl);
+            const rentalRequests = await rentalResponse.json();
+
+            // Fetch cars
+            const carsResponse = await fetch(carsApiUrl);
+            const cars = await carsResponse.json();
+
+            // Create a map to correlate car IDs with their details
+            const carMap = {};
+            cars.forEach(car => {
+                carMap[car.carId] = {
+                    regNo: car.regNo,
+                    brand: car.brand,
+                    model: car.model,
+                    dailyPrice: car.dailyPrice // Assuming the car API provides price info
+                };
+            });
+
+            // Clear the previous history content
+            rentalHistoryBody.innerHTML = '';
+
+            // Generate rows for the rental history of the logged-in user
+            let no = 1;
+            rentalRequests.forEach(request => {
+                if (request.customerId == loggedInUserId) { // Show only the logged-in user's history
+                    const car = carMap[request.carId]; // Get car details from the carMap
+
+                    // Create a new row for the rental history
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${no++}</td>
+                        <td>${car.regNo}</td>
+                        <td>${car.brand}</td>
+                        <td>${car.model}</td>
+                        <td>${car.dailyPrice.toFixed(2)}</td>
+                        <td>${new Date(request.startDate).toLocaleDateString()}</td>
+                        <td>${new Date(request.endDate).toLocaleDateString()}</td>
+                        <td>${request.totalPrice.toFixed(2)}</td>
+                    `;
+
+                    // Append the row to the table body
+                    rentalHistoryBody.appendChild(row);
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching rental history:', error);
+            alert('Failed to load rental history. Please try again later.');
+        }
+    }
+
+    // Event listener for opening the rental history modal when clicking "History"
+    viewHistoryLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        fetchRentalHistory(); // Fetch and display rental history
+        const historyModal = new bootstrap.Modal(document.getElementById('rentalHistoryModal'));
+        historyModal.show(); // Show the modal after fetching history
+    });
 });

@@ -49,60 +49,64 @@ namespace Car_Rental_API.Database
         {
             // Corrected table definition with proper NVARCHAR lengths
             string tableQuery = @"
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Cars' AND xtype='U') 
-                CREATE TABLE Cars(
-                    CarId INT PRIMARY KEY, 
-                    RegNo NVARCHAR(50) NOT NULL,
-                    Brand NVARCHAR(50) NOT NULL,
-                    Model NVARCHAR(50) NOT NULL,
-                    HourlyPrice DECIMAL(10,2) NOT NULL,
-                    DailyPrice DECIMAL(10,2) NOT NULL,
-                    ImagePath NVARCHAR(255) NOT NULL,
-                    SeatCount INT NOT NULL,
-                    FuelType NVARCHAR(50) NOT NULL
-                );
+                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Cars' AND xtype='U') 
+            CREATE TABLE Cars(
+            CarId NVARCHAR(50) PRIMARY KEY, 
+            ImagePath NVARCHAR(MAX) NOT NULL,
+            Brand NVARCHAR(50) NOT NULL,
+            Model NVARCHAR(50) NOT NULL,
+            GearType NVARCHAR(50) NOT NULL,
+            SeatCount INT NOT NULL,
+            FuelType NVARCHAR(50) NOT NULL,
+            Mileage INT,
+            Year INT,
+            RegNo NVARCHAR(50) NOT NULL,
+            DailyPrice DECIMAL(10,2) NOT NULL
+        );
 
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Customers' AND xtype='U') 
-                CREATE TABLE Customers(
-                    CustomerId INT PRIMARY KEY,
-                    FirstName NVARCHAR(50) NOT NULL,
-                    LastName NVARCHAR(50) NOT NULL,
-                    ImagePath NVARCHAR(MAX) NOT NULL,
-                    Phone NVARCHAR(15) NOT NULL,
-                    Address NVARCHAR(100) NOT NULL,
-                    Password NVARCHAR(100) NOT NULL,
-                    Email NVARCHAR(50) NOT NULL,
-                    NIC NVARCHAR(15) NOT NULL,
-                    Licence NVARCHAR(20) NOT NULL
-                );
-                  
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='RentalRequests' AND xtype='U') 
-                CREATE TABLE RentalRequests (
-                    RentalId INT PRIMARY KEY, 
-                    CustomerId INT NOT NULL,                  
-                    CarId INT NOT NULL,                   
-                    StartDate DATE NOT NULL,     
-                    EndDate DATE NOT NULL,  
-                    TotalPrice DECIMAL(10, 2) NOT NULL,   
-                    Action NVARCHAR(50) DEFAULT 'Pending',
-                    Status NVARCHAR(20)  NOT NULL ,  
-                    RequestDate DATETIME DEFAULT GETDATE(),
-                    FOREIGN KEY (CustomerId) REFERENCES Customers(CustomerId), 
-                    FOREIGN KEY (CarId) REFERENCES Cars(CarId)
-                  );
-                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='CarBrand' AND xtype='U') 
-                CREATE TABLE CarBrand (
-                    BrandId INT PRIMARY KEY,
-                    BrandName NVARCHAR(50) NOT NULL,
-                );
-           
-                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='CarModel' AND xtype='U') 
-                CREATE TABLE CarModel (
-                   ModelId INT PRIMARY KEY,
-                   ModelName NVARCHAR(50) NOT NULL,
-                   BrandId INT,
-                   FOREIGN KEY (BrandId) REFERENCES CarBrand(BrandId),
-);";
+        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Customers' AND xtype='U') 
+        CREATE TABLE Customers(
+            CustomerId NVARCHAR(50) PRIMARY KEY,
+            FirstName NVARCHAR(50) NOT NULL,
+            LastName NVARCHAR(50) NOT NULL,
+            Email NVARCHAR(50) NOT NULL,
+            Phone NVARCHAR(15) NOT NULL,
+            Address NVARCHAR(100) NOT NULL,
+            Licence NVARCHAR(20) NOT NULL,
+            NIC NVARCHAR(15) NOT NULL,
+            Password NVARCHAR(100) NOT NULL
+        );
+
+        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='RentalRequests' AND xtype='U') 
+        CREATE TABLE RentalRequests (
+            RentalId NVARCHAR(50) PRIMARY KEY, 
+            CarId NVARCHAR(50) NOT NULL,                  
+            CustomerId NVARCHAR(50) NOT NULL,                   
+            StartDate DATE NOT NULL,     
+            EndDate DATE NOT NULL,  
+            Duration INT,
+            TotalPrice DECIMAL(10, 2) NOT NULL,   
+            Action NVARCHAR(50) DEFAULT 'Pending',
+            Status NVARCHAR(20) NOT NULL,  
+            RequestDate DATETIME DEFAULT GETDATE(),
+            FOREIGN KEY (CustomerId) REFERENCES Customers(CustomerId), 
+            FOREIGN KEY (CarId) REFERENCES Cars(CarId)
+        );
+
+        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='CarBrand' AND xtype='U') 
+        CREATE TABLE CarBrand (
+            BrandId NVARCHAR(50) PRIMARY KEY,
+            BrandName NVARCHAR(50) NOT NULL
+        );
+
+        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='CarModel' AND xtype='U') 
+        CREATE TABLE CarModel (
+            ModelId NVARCHAR(50) PRIMARY KEY,
+            ModelName NVARCHAR(50) NOT NULL,
+            BrandId NVARCHAR(50),
+            FOREIGN KEY (BrandId) REFERENCES CarBrand(BrandId)
+        );
+          ";
 
             // Correct insert query for Cars
             //string insertQuery = @"INSERT INTO Cars (CarId, RegNo, Brand, Model, HourlyPrice, DailyPrice, ImagePath, SeatCount, FuelType)

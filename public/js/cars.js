@@ -1,25 +1,26 @@
 // Function to fetch and display cars based on filter criteria
-async function fetchAndDisplayCars(filterCriteria = {}) {
+async function fetchAndDisplayCars() {
     try {
         const response = await fetch('http://localhost:5034/api/Car/getAllCars');
         if (!response.ok) throw new Error('Failed to fetch car details');
 
         const cars = await response.json();
-        const showCarCard = document.getElementById('showCarsCards');
+        const showCarCard = document.getElementById('showCars');
         showCarCard.innerHTML = ''; // Clear existing cards
 
-        // Filter cars based on criteria (if any)
-        const filteredCars = cars.filter(car => {
-            const matchesBrand = filterCriteria.brand ? car.brand.toLowerCase() === filterCriteria.brand.toLowerCase() : true;
-            const matchesPrice = filterCriteria.dayPrice ? parseFloat(car.dayPrice) <= parseFloat(filterCriteria.dayPrice) : true;
+        // // Filter cars based on criteria (if any)
+        // const filteredCars = cars.filter(car => {
+        //     const matchesBrand = filterCriteria.brand ? car.brand.toLowerCase() === filterCriteria.brand.toLowerCase() : true;
+        //     const matchesPrice = filterCriteria.dayPrice ? parseFloat(car.dayPrice) <= parseFloat(filterCriteria.dayPrice) : true;
 
-            return matchesBrand && matchesPrice; // Both brand and price conditions must match
-        });
+        //     return matchesBrand && matchesPrice; // Both brand and price conditions must match
+        // });
 
         // Only display cars if there are filtered results
-        if (filteredCars.length > 0) {
-            // Loop through each filtered car and create the card HTML
-            filteredCars.forEach(car => {
+        // if (filteredCars.length > 0) {
+        //     // Loop through each filtered car and create the card HTML
+        //     filteredCars
+            cars.forEach(car => {
                 const cardHTML = `
                     <div class="col">
                         <div class="card car-card">
@@ -84,16 +85,12 @@ async function fetchAndDisplayCars(filterCriteria = {}) {
                     }
                 });
             });
-        } else {
-            // Optionally, show a message when no cars match the filters
-            showCarCard.innerHTML = '<p>No cars found for the applied filters.</p>';
-            showCarCard.style.color = "red";
-        }
-    } catch (error) {
+        } 
+    catch (error) {
         console.error('Error fetching car details:', error);
     }
-}
 
+}
 // Filter form event listener
 document.getElementById('filterForm').addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent form submission

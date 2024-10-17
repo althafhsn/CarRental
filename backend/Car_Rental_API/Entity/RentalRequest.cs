@@ -2,11 +2,13 @@
 {
     public class RentalRequest
     {
-        public int RentalId { get; set; }
-        public int CustomerId { get; set; }
-        public int CarId { get; set; }
+        public string RentalId { get; set; }
+        public string CarId { get; set; }
+        public string CustomerId { get; set; }
+      
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public int Duration { get; set; }
         public decimal TotalPrice { get; set; }
         public string Action { get; set; } = "Pending";
         public string Status { get; set; }
@@ -17,13 +19,15 @@
         //public Customer customer { get; set; }
         //public Car car { get; set; }
 
-        public RentalRequest(int rentalId, int customerId, int carId, DateTime startDate, DateTime endDate, decimal totalPrice, string action, string status, DateTime requestDate)
+        public RentalRequest(string rentalId,string carId, string customerId, DateTime startDate, DateTime endDate,int duration, decimal totalPrice, string action, string status, DateTime requestDate)
         {
             RentalId = rentalId;
-            CustomerId = customerId;
             CarId = carId;
+            CustomerId = customerId;
+            
             StartDate = startDate;
             EndDate = endDate;
+            Duration = duration;
             TotalPrice = totalPrice;
             Action = action;
             Status = status;

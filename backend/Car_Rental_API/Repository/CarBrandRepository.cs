@@ -31,7 +31,7 @@ namespace Car_Rental_API.Repository
                     {
                         while (reader.Read())
                         {
-                            int brandId = reader.GetInt32(0);
+                            string brandId = reader.GetString(0);
                             string brandName = reader.GetString(1);
 
                             // Find or create the brand object
@@ -52,7 +52,7 @@ namespace Car_Rental_API.Repository
                             {
                                 // Create the model object using the constructor
                                 var model = new CarModel(
-                                    modelId: reader.GetInt32(2),
+                                    modelId: reader.GetString(2),
                                     modelName: reader.GetString(3),
                                     brandId: brandId // Associate the model with the brand
                                 );
@@ -67,7 +67,7 @@ namespace Car_Rental_API.Repository
             return brands;
         }
 
-        public CarBrand GetBrandById(int id)
+        public CarBrand GetBrandById(string id)
         {
             CarBrand brand = null; // Initialize brand as null
             string query = @"
@@ -94,7 +94,7 @@ namespace Car_Rental_API.Repository
                             {
                                 brand = new CarBrand
                                 {
-                                    BrandId = reader.GetInt32(0),
+                                    BrandId = reader.GetString(0),
                                     BrandName = reader.GetString(1),
                                     Models = new List<CarModel>() // Initialize the Models list
                                 };
@@ -105,7 +105,7 @@ namespace Car_Rental_API.Repository
                             {
                                 // Create the model object using the constructor
                                 var model = new CarModel(
-                                    modelId: reader.get(2),
+                                    modelId: reader.GetString(2),
                                     modelName: reader.GetString(3),
                                     brandId: brand.BrandId // Associate the model with the brand
                                 );

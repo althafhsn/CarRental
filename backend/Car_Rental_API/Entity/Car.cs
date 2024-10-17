@@ -1,31 +1,39 @@
 ﻿public class Car
 {
-    public int CarId { get; set; }
-    public string RegNo { get; set; }
+    public string CarId { get; set; }
+    public string ImagePath { get; set; }
+   
     public string Brand { get; set; }
     public string Model { get; set; }
-    public decimal HourlyPrice { get; set; }
-    public decimal DailyPrice { get; set; }
-    public string ImagePath { get; set; }
+    public string GearType { get; set; }
     public int SeatCount { get; set; }
     public string FuelType { get; set; }
+    public int Mileage { get; set; }
+   
+    public int Year { get; set; }
+   public string RegNo { get; set; }
+    public decimal DailyPrice { get; set; }
 
     // Parameterless constructor required for model binding
     public Car()
     {
     }
 
-    // Constructor with parameters
-    public Car(int carId, string regNo, string brand, string model, decimal hourlyPrice, decimal dailyPrice, string imagePath, int seatCount, string fuelType)
+    public Car(string carId, string imagePath, string brand, string model, string gearType, int seatCount, string fuelType, int mileage, int year, string regNo,decimal dailyPrice)
     {
         CarId = carId;
-        RegNo = regNo;
+        ImagePath = imagePath;
         Brand = brand;
         Model = model;
-        HourlyPrice = hourlyPrice;
-        DailyPrice = dailyPrice;
-        ImagePath = imagePath;
+        GearType = gearType;
         SeatCount = seatCount;
         FuelType = fuelType;
+        Mileage = mileage;
+        Year = year;
+        RegNo = regNo;
+        DailyPrice = dailyPrice;
     }
+
+    // Constructor with parameters
+
 }

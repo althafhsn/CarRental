@@ -20,24 +20,23 @@ namespace Car_Rental_API.Controllers
         }
 
         [HttpPost("Add-car")]
-        public async Task<IActionResult> CreateCar([FromForm] Car car)
+        public async Task<IActionResult> CreateCar(Car car)
         {
             Car carObj = new Car(
                 car.CarId,
-            car.RegNo,
-            car.Brand,
-             car.Model,
-         car.HourlyPrice,
-         car.DailyPrice,
-         car.ImagePath,
-         car.SeatCount,
-         car.FuelType
+                car.ImagePath,
+                car.Brand,
+                car.Model,
+                car.GearType,
+                car.SeatCount,
+                car.FuelType,
+                car.Mileage,
+                car.Year,
+                car.RegNo,
+                car.DailyPrice
      );
 
-
-
-
-            var carData = _carRepository.CreateCar(carObj);
+           var carData = _carRepository.CreateCar(carObj);
             return Ok(carData);
         }
 
@@ -50,7 +49,7 @@ namespace Car_Rental_API.Controllers
 
         [HttpGet("GetCarById")]
 
-        public IActionResult GetCarById(int carId)
+        public IActionResult GetCarById(string carId)
         {
             try
             {
@@ -62,12 +61,12 @@ namespace Car_Rental_API.Controllers
             }
         }
 
-        [HttpPut("UpdateCarById/{id}")]
-        public IActionResult UpdateCar( int id, CarUpdateRequest carUpdateRequest)
+        [HttpPut("UpdateCarById")]
+        public IActionResult UpdateCar( string carId, CarUpdateRequest carUpdateRequest)
         {
             try
             {
-                _carRepository.UpdateCar(id, carUpdateRequest);
+                _carRepository.UpdateCar(carId, carUpdateRequest);
                 return Ok(carUpdateRequest);
             }catch (Exception ex)
             {
@@ -75,8 +74,8 @@ namespace Car_Rental_API.Controllers
             }
         }
 
-        [HttpDelete("DeleteById/{carId}")]
-        public IActionResult DeleteCar(int carId)
+        [HttpDelete("DeleteById")]
+        public IActionResult DeleteCar(string carId)
         {
             try
             {

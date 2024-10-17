@@ -1,7 +1,7 @@
 
 // SIDBAR
 
-window.onload = function() {
+window.onload = function () {
     const isAuthenticated = sessionStorage.getItem("isAuthenticated");
 
     // If the admin is not authenticated, redirect to login page
@@ -10,11 +10,11 @@ window.onload = function() {
     }
 };
 
-document.getElementById("logoutButton").addEventListener('click', ()=>{
-   
+document.getElementById("logoutButton").addEventListener('click', () => {
+
     sessionStorage.removeItem("isAuthenticated");
     window.location.href = "./adminLogin.html";
-} )
+})
 
 // Optional: Log out function to clear authentication
 function logout() {
@@ -204,3 +204,186 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 // Image preview
+
+// Function to fetch available cars
+async function fetchAvailableCars() {
+    try {
+        // Fetch all cars from the API
+        const carsResponse = await fetch('http://localhost:5034/api/Car/getAllCars'); // Replace with your actual API endpoint
+        const cars = await carsResponse.json();
+        console.log(cars);
+        // Fetch all rental requests from the API
+        const rentalRequestsResponse = await fetch('http://localhost:5034/api/RentalRequest/getAllRentalRequests'); // Replace with your actual API endpoint
+        const rentalRequests = await rentalRequestsResponse.json();
+        console.log(rentalRequests);
+        // Get all rented car IDs
+        const rentedCarIds = rentalRequests.map(request => request.carId); // Assuming carId is the property name in rental requests
+        console.log(rentedCarIds);
+        // Filter out available cars
+        const availableCars = cars.filter(car => !rentedCarIds.includes(car.carId)); // Assuming id is the property name in car objects
+        console.log(availableCars);
+        // Display the available cars in a table
+        displayAvailableCars(availableCars);
+
+        
+            const availableCarsCardText = document.getElementById('availableCarsCount');
+            
+          
+        
+            // Update the card text with the total number of available cars
+            availableCarsCardText.innerText = availableCars.length;
+        
+    } catch (error) {
+        console.error('Error fetching available cars:', error);
+    }
+
+
+    // Function to display available cars in a table
+    function displayAvailableCars(cars) {
+        const availableCarsElement = document.getElementById('availableCars');
+
+        // Clear existing content
+        availableCarsElement.innerHTML = '';
+
+        // Check if there are available cars
+        if (cars.length === 0) {
+            availableCarsElement.innerHTML = '<tr><td colspan="5">No available cars.</td></tr>';
+            return;
+        }
+
+        // Display each available car in a table row
+        cars.forEach((car, index) => {
+            const carElement = document.createElement('tr');
+            carElement.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${car.id || car.carId}</td> <!-- Adjust based on your API response -->
+            <td>${car.brand}</td>
+            <td>${car.model}</td>
+            <td>$${car.dailyPrice || car.price}</td> <!-- Adjust based on your API response -->
+        `;
+            availableCarsElement.appendChild(carElement);
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const rentalTableBody = document.getElementById('rentalRequestsTableBody');
+
+    // API endpoint for fetching rental requests
+    const apiUrl = ('http://localhost:5034/api/RentalRequest/getAllRentalRequests');
+
+    // Function to fetch data from API
+    async function fetchRentalRequests() {
+        try {
+            const response = await fetch(apiUrl); // Fetch the data
+            const rentalRequests = await response.json(); // Convert response to JSON
+
+            // Filter approved rental requests
+            const approvedRequests = rentalRequests.filter(request => request.action === 'Approved');
+
+            // Populate the table with approved rental requests
+            approvedRequests.forEach((request, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td> 
+                    <td>${request.rentalId}</td>
+                    <td>${request.carId}</td>
+                    <td>${request.customerId}</td>
+                    <td>${request.startDate}</td>
+                    <td>${request.endDate}</td>
+                `;
+                rentalTableBody.appendChild(row);
+            });
+
+            const rentedCarCount = document.getElementById('rentedCars');
+            rentedCarCount.innerHTML = approvedRequests.length;
+        } catch (error) {
+            console.error('Error fetching rental requests:', error);
+        }
+    }
+
+    // Call the function to fetch data when the page is loaded
+    fetchRentalRequests();
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // API endpoint for fetching rental requests
+    const apiUrl = ('http://localhost:5034/api/RentalRequest/getAllRentalRequests');
+    const carApiUrl =('http://localhost:5034/api/Car/getAllCars');
+
+    // Function to fetch data from API and calculate total revenue
+    async function fetchRentalRequestsAndCalculateRevenue() {
+        try {
+            const response = await fetch(apiUrl); // Fetch the data
+            const rentalRequests = await response.json(); // Convert response to JSON
+
+              // Fetch cars
+              const carsResponse = await fetch(carApiUrl);
+              const cars = await carsResponse.json();
+
+            // Filter approved rental requests
+            const approvedRequests = rentalRequests.filter(request => request.action === 'pending');
+
+            // Calculate total revenue
+            const totalRevenue = approvedRequests.reduce((acc, request) => acc + request.totalPrice, 0);
+
+            // Display total revenue
+            document.getElementById('totalRevenue').innerText = totalRevenue.toFixed(2); // Assuming you want to display it with 2 decimal places
+        
+           
+ 
+             // Create a map to correlate car IDs with their brands
+             const carBrandMap = {};
+             cars.forEach(car => {
+                 carBrandMap[car.carId] = car.brand; // Assuming each car has an 'id' and 'brand' property
+             });
+ 
+             // Group total revenue by car brand
+             const revenueByBrand = {};
+ 
+             rentalRequests.forEach(request => {
+                 if (request.action === 'pending') {
+                     const carId = request.carId; // Assuming this field exists in the rental request
+                     const totalPrice = request.totalPrice; // Assuming this field exists in the rental request
+                     const brand = carBrandMap[carId]; // Get brand from the map
+ 
+                     // If the brand is not in the revenueByBrand object, initialize it
+                     if (!revenueByBrand[brand]) {
+                         revenueByBrand[brand] = 0;
+                     }
+ 
+                     // Add the total price to the corresponding brand
+                     revenueByBrand[brand] += totalPrice;
+                 }
+             });
+ 
+             // Clear existing rows in the table
+             const revenueBody = document.getElementById('revenueBody');
+             revenueBody.innerHTML = '';
+ 
+             // Populate the table with revenue data
+             for (const brand in revenueByBrand) {
+                 const row = document.createElement('tr');
+                 row.innerHTML = `
+                     <td>${brand}</td>
+                     <td>${revenueByBrand[brand].toFixed(2)}</td> <!-- Display with 2 decimal places -->
+                 `;
+                 revenueBody.appendChild(row);
+             }
+        
+        } catch (error) {
+            console.error('Error fetching rental requests:', error);
+        }
+    }
+
+    // Call the function to fetch data and calculate revenue when the page is loaded
+    fetchRentalRequestsAndCalculateRevenue();
+});
+
+
+// Call the function to fetch available cars
+fetchAvailableCars();
+
+
+

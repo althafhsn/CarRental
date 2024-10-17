@@ -24,7 +24,7 @@ namespace Car_Rental_API.Controllers
 
         [HttpGet("getAllBrandById")]
 
-        public IActionResult GetBrandById(int id)
+        public IActionResult GetBrandById(string id)
         {
             try
             {

@@ -22,10 +22,11 @@ namespace Car_Rental_API.Controllers
             // Create a new RentalRequest object
             RentalRequest rental = new RentalRequest(
                 rentalRequest.RentalId,
-                rentalRequest.CustomerId,
                 rentalRequest.CarId,
+                rentalRequest.CustomerId,
                 rentalRequest.StartDate,
                 rentalRequest.EndDate,
+                rentalRequest.Duration,
                 rentalRequest.TotalPrice,
                 rentalRequest.Action,
                 rentalRequest.Status,
@@ -49,11 +50,11 @@ namespace Car_Rental_API.Controllers
 
         [HttpGet("getAllRentalRequestsById")]
 
-        public IActionResult GetRentalRequestById(int id)
+        public IActionResult GetRentalRequestById(string rentalId)
         {
             try
             {
-                var rental = rentalRequestRepository.GetRentalRequestById(id);
+                var rental = rentalRequestRepository.GetRentalRequestById(rentalId);
                 return Ok(rental);
             }
             catch (Exception ex)

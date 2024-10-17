@@ -19,19 +19,18 @@ namespace Car_Rental_API.Controllers
         }
 
         [HttpPost("addCustomer")]
-        public async Task<IActionResult>AddCustomer([FromForm]Customer customer)
+        public async Task<IActionResult>AddCustomer(Customer customer)
         {
             Customer cusObj = new Customer(
                 customer.CustomerId,
                 customer.FirstName,
                 customer.LastName,
-                customer.ImagePath,
+                customer.Email,
                 customer.Phone,
                 customer.Address,
-                customer.Password,
-                customer.Email,
+                customer.Licence,
                 customer.NIC,
-                customer.Licence
+                customer.Password
                 );
 
             var customerData = customerRepository.AddCustomer(cusObj);
@@ -47,11 +46,11 @@ namespace Car_Rental_API.Controllers
 
         [HttpGet("GetCustomerById")]
 
-        public IActionResult GetCarById(int id)
+        public IActionResult GetCarById(string customerId)
         {
             try
             {
-                var car = customerRepository.GetCustomerById(id);
+                var car = customerRepository.GetCustomerById(customerId);
                 return Ok(car);
             }
             catch (Exception ex)
@@ -60,12 +59,12 @@ namespace Car_Rental_API.Controllers
             }
         }
 
-        [HttpPut("UpdateCustomerById/{id}")]
-        public IActionResult UpdateCustomer(int id,UpdateCustomerRequest updateCustomerRequest)
+        [HttpPut("UpdateCustomerById")]
+        public IActionResult UpdateCustomer(string customerId, UpdateCustomerRequest updateCustomerRequest)
         {
             try
             {
-                customerRepository.UpdateCustomer(id, updateCustomerRequest);
+                customerRepository.UpdateCustomer(customerId, updateCustomerRequest);
                 return Ok(updateCustomerRequest);
             }
             catch (Exception ex)
@@ -74,12 +73,12 @@ namespace Car_Rental_API.Controllers
             }
         }
 
-        [HttpDelete("DeleteById/{id}")]
-        public IActionResult DeleteCar(int id)
+        [HttpDelete("DeleteById")]
+        public IActionResult DeleteCar(string customerId)
         {
             try
             {
-                customerRepository.DeleteCustomer(id);
+                customerRepository.DeleteCustomer(customerId);
                 return Ok();
             }
             catch (Exception ex)

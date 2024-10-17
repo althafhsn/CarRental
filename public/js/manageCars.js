@@ -189,7 +189,7 @@ async function submitCarForm() {
         mileage: mileage.value,
         year: carYear.value,
         regNo: regNo.value,
-        dailyPrice: dayPrice.value,
+        dailyPrice: dayPrice.value
     };
 
     if (!Object.values(carData).every(value => value.trim() !== '' && value !== null)) {
@@ -204,6 +204,7 @@ async function submitCarForm() {
             body: JSON.stringify(carData)
         });
 
+
         if (response.ok) {
             alert('Car added successfully!');
             carForm.reset();
@@ -214,6 +215,9 @@ async function submitCarForm() {
 
         alert('Error adding the car. Please try again.');
     }
+
+
+    window.location.reload();
 }
 
 // Convert image file to Base64
@@ -343,7 +347,6 @@ async function openCarEditModal(carId) {
 
         // Populate modal fields with the car data
         document.getElementById('editCarId').value = car.carId;
-        document.getElementById('editCarId').value = car.imagePath;
         document.getElementById('editCarBrand').value = car.brand;
         document.getElementById('editCarName').value = car.model;
         document.getElementById('editCarGearType').value = car.gearType;
@@ -353,7 +356,6 @@ async function openCarEditModal(carId) {
         document.getElementById('editCarYear').value = car.year;
         document.getElementById('editCarRegNo').value = car.regNo;        
         document.getElementById('editCarDayPrice').value = car.dailyPrice;
-
 
         // Show the modal
         const modal = new bootstrap.Modal(document.getElementById('editCarModal'));
@@ -370,12 +372,15 @@ document.getElementById('saveCarChangesBtn').addEventListener('click', async fun
     const carId = document.getElementById('editCarId').value;
     console.log(carId)
     const updatedCarData = {
-        gearType: document.getElementById('editCarGearType').value,
-        seatCount: document.getElementById('editCarSeatCount').value,
-        fuelType: document.getElementById('editCarFuelType').value,
-        mileage: document.getElementById('editCarMileage').value,
-        year: document.getElementById('editCarYear').value,
-        dailyPrice: document.getElementById('editCarDayPrice').value
+        brand:document.getElementById('editCarBrand').value,
+        model:document.getElementById('editCarName').value,
+        gearType:document.getElementById('editCarGearType').value,
+        seatCount:document.getElementById('editCarSeatCount').value,
+        fuelType:document.getElementById('editCarFuelType').value,
+        mileage:document.getElementById('editCarMileage').value,
+        year:document.getElementById('editCarYear').value,
+        regNo:document.getElementById('editCarRegNo').value,      
+        dailyPrice:document.getElementById('editCarDayPrice').value
     };
 
     // Ensure no fields are empty before making the update request
@@ -386,11 +391,12 @@ document.getElementById('saveCarChangesBtn').addEventListener('click', async fun
   
 
     try {
-        const response = await fetch(`http://localhost:5034/api/Car/UpdateCarById/${carId}`, {
+        const response = await fetch(`http://localhost:5034/api/Car/UpdateCarById?carId=${carId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedCarData)
         });
+        console.log(carId);
 
         if (!response.ok) {
             const errorResponse = await response.json();  // Get the detailed error response from the server
@@ -420,14 +426,14 @@ document.getElementById('saveCarChangesBtn').addEventListener('click', async fun
 async function deleteCar(carId) {
     console.log(carId)
     try {
-        const response = await fetch(`http://localhost:5034/api/Car/DeleteById/${carId}`, {
+        const response = await fetch(`http://localhost:5034/api/Car/DeleteById?carId=${carId}`, {
             method: 'DELETE',
         });
 
         if (!response.ok) {
             throw new Error('Failed to delete car');
         }
-
+console.log(carId);
         alert('Car deleted successfully');
         fetchCars(); // Refresh the car table
     } catch (error) {

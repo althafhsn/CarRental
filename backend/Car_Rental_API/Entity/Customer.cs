@@ -4,31 +4,33 @@ namespace Car_Rental_API.Entity
 {
     public class Customer
     {
-         public int CustomerId { get; set; }
+         public string CustomerId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string ImagePath { get; set; }
+        public string Email { get; set; }
         public string Phone {  get; set; }
         public string Address { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public string NIC { get; set; }
         public string Licence { get; set; }
+        public string NIC { get; set; }
+        public string Password { get; set; }
+       
+        
+       
 
 
         public Customer() { }
-        public Customer(int customerId, string firstName, string lastName, string imagePath, string phone, string address, string password, string email, string nIC, string licence)
+
+        public Customer(string customerId, string firstName, string lastName, string email, string phone, string address, string licence, string nic, string password)
         {
             CustomerId = customerId;
             FirstName = firstName;
             LastName = lastName;
-            ImagePath = imagePath;
+            Email = email;
             Phone = phone;
             Address = address;
-            Password = password;
-            Email = email;
-            NIC = nIC;
             Licence = licence;
+            NIC = nic;
+            Password = password;
         }
     }
 }

@@ -6,6 +6,6 @@ namespace Car_Rental_API.IRepository
     {
         RentalRequest AddRentalRequest(RentalRequest rentalRequest);
         ICollection<RentalRequest> GetRentalRequest();
-        RentalRequest GetRentalRequestById(int id);
+        RentalRequest GetRentalRequestById(string rentalId);
     }
 }
