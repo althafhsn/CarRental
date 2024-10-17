@@ -111,11 +111,6 @@ document.getElementById('filterForm').addEventListener('submit', function (event
     fetchAndDisplayCars(filterCriteria);
 });
 
-
-
-
-
-
 // Generate a random ID
 function generateId(length) {
     const chars = "1234567890";
