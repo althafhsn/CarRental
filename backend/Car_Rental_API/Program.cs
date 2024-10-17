@@ -27,7 +27,6 @@ namespace Car_Rental_API
             builder.Services.AddSingleton<ICarRepository>(provider => new CarRepository(databaseConnectionString));
             builder.Services.AddSingleton<ICustomerRepository>(provider => new CustomerRepository(databaseConnectionString));
             builder.Services.AddSingleton<IRentalRequestRepository>(provider => new RentalRequestRepository(databaseConnectionString));
-            builder.Services.AddSingleton<ICarBrand>(provider => new CarBrandRepository(databaseConnectionString));
 
             builder.Services.AddCors(opt =>
             {

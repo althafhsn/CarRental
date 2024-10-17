@@ -10,7 +10,7 @@
         public DateTime EndDate { get; set; }
         public int Duration { get; set; }
         public decimal TotalPrice { get; set; }
-        public string Action { get; set; } = "Pending";
+        public string Action { get; set; } 
         public string Status { get; set; }
       
         public DateTime RequestDate { get; set; } = DateTime.Now;

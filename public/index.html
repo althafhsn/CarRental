@@ -29,7 +29,7 @@
               <a class="nav-link" aria-current="page" href="index.html">Home</a>
             </li>
             <li class="nav-item ms-0 ms-md-3">
-              <a class="nav-link" href="#exploreCars">Explore Cars</a>
+              <a class="nav-link" href="explore-cars.html">Explore Cars</a>
             </li>
             <li class="nav-item ms-0 ms-md-3">
               <a class="nav-link" href="#about">About </a>
@@ -75,6 +75,7 @@
                           <th>Rent Date</th>
                           <th>Return Date</th>
                           <th>Total Amount</th>
+                          <th>Status</th>
                       </tr>
                   </thead>
                   <tbody id="rentalHistoryBody">
@@ -106,7 +107,7 @@
                 comfort and reliability for your journeys.
               </p>
               <!-- <a href="#exploreCars"> -->
-                <button class="btn btn-primary px-5 py-3 mt-3 fs-5 fw-medium" type="button"data-bs-toggle="modal"data-bs-target="#showCar">
+                <button class="btn btn-primary px-5 py-3 mt-3 fs-5 fw-medium" type="button">
                   Rent a Car Now
                 </button>
               <!-- </a> -->
@@ -122,22 +123,7 @@
   </div>
   <div>
 
-    <div class="modal fade" id="showCar" tabindex="-1" aria-labelledby="showCarModalLabel" aria-hidden="true">
-      <div class="modal-dialog " style="max-width: 90%;">
-        <div class="modal-content">
-          <div class="modal-header text-center d-flex justify-content-center h1">
-            All Cars
-          </div>
-          <div class="container modal-body" style="overflow-y: auto; height: 700px; max-height: 700px;">
-            <div id="showCars" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="title" aria-hidden="true">
+  <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="title" aria-hidden="true">
       <div class="modal-dialog">
           <div class="modal-content">
               <div class="modal-header text-center">
@@ -212,7 +198,7 @@
             Filtered Car
           </div>
           <div class="container modal-body" style="overflow-y: auto; height: 700px; max-height: 700px;">
-            <div id="showCarCards" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"></div>
+            <div id="showCarsCards" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"></div>
           </div>
         </div>
       </div>
@@ -478,7 +464,7 @@
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
   <script src="./js/main.js"></script>
   <script src="./js/carCard.js"></script>
-  <script src="./js/cars.js"></script>
+  <!-- <script src="./js/cars.js"></script> -->
   <script src="https://kit.fontawesome.com/0c088ff309.js" crossorigin="anonymous"></script>
 </body>
 
