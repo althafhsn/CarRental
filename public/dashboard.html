@@ -503,7 +503,7 @@ box-shadow: 5px 10px rgb(12, 12, 12) ;
                                 <div class="card" data-bs-toggle="modal" data-bs-target="#overdueCarsModal">
                                     <div class="card-body">
                                         <h5 class="card-title">Overdue Cars</h5>
-                                        <p id="overdueCars" class="card-text">Loading...</p>
+                                        <p id="overdueCars" class="card-text" style="text-align: center;">0</p>
                                     </div>
                                 </div>
                             </div>
@@ -593,24 +593,13 @@ box-shadow: 5px 10px rgb(12, 12, 12) ;
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Car Name</th>
-                                        <th>Status</th>
-                                        <th>Price</th>
+                                        <th>Customer ID</th>
+                                        <th>Car ID</th>
+                                        <th>Car Brand</th>
+                                        <th>No of Days</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>5</td>
-                                        <td>Car Model E</td>
-                                        <td>Overdue</td>
-                                        <td>$90</td>
-                                    </tr>
-                                    <tr>
-                                        <td>6</td>
-                                        <td>Car Model F</td>
-                                        <td>Overdue</td>
-                                        <td>$100</td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -656,6 +645,7 @@ box-shadow: 5px 10px rgb(12, 12, 12) ;
     crossorigin="anonymous"></script>
   <script src="./js/dashboard.js"></script>
   <script src="./js/manageTables.js"></script>
+  <script src="./js/adminLogin.js"></script>
 </body>
 
 </html>

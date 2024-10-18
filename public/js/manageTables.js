@@ -144,7 +144,7 @@ function displayRentalRequest(requests) {
               }
           </td>
           <td>
-              <button class="btn btn-outline-primary return-btn" data-rental-id="${request.rentalId}" ${request.status === 'Approved' ? '' : 'disabled'}>
+              <button class="btn btn-outline-primary return-btn" data-rental-id="${request.rentalId}" ${request.status === 'Approved' ? '' : 'disabled'}onclick="handleReturnButtonClick('rentalId')">
                   Return
               </button>
           </td>
@@ -598,7 +598,7 @@ async function submitCarForm() {
     const base64Image = await getBase64(file);
 
     const carData = {
-        carId: generateId(12),
+        carId: generateId(8),
         imagePath: base64Image,
         brand: carBrand.value,
         model: carName.value,

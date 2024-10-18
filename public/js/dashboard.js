@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 // Image preview
-
+console.log("fcghbjk")
 // Function to fetch available cars
 async function fetchAvailableCars() {
     try {
@@ -221,7 +221,7 @@ async function fetchAvailableCars() {
         const availableCars = cars.filter(car => !rentedCarIds.includes(car.carId)); // Assuming id is the property name in car objects
         // Display the available cars in a table
         displayAvailableCars(availableCars);
-
+console.log(availableCars);
 
         const availableCarsCardText = document.getElementById('availableCarsCount');
 
@@ -256,7 +256,7 @@ async function fetchAvailableCars() {
             <td>${car.id || car.carId}</td> <!-- Adjust based on your API response -->
             <td>${car.brand}</td>
             <td>${car.model}</td>
-            <td>$${car.dailyPrice || car.price}</td> <!-- Adjust based on your API response -->
+            <td>${car.dailyPrice || car.price}</td> <!-- Adjust based on your API response -->
         `;
             availableCarsElement.appendChild(carElement);
         });
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const rentalRequests = await response.json(); // Convert response to JSON
 
             // Filter approved rental requests
-            const approvedRequests = rentalRequests.filter(request => request.action === 'Approved');
+            const approvedRequests = rentalRequests.filter(request => request.status === 'Approved');
 
             // Populate the table with approved rental requests
             approvedRequests.forEach((request, index) => {
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const cars = await carsResponse.json();
 
             // Filter approved rental requests
-            const approvedRequests = rentalRequests.filter(request => request.action === 'pending');
+            const approvedRequests = rentalRequests.filter(request => request.status === 'Approved');
 
             // Calculate total revenue
             const totalRevenue = approvedRequests.reduce((acc, request) => acc + request.totalPrice, 0);
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const revenueByBrand = {};
 
             rentalRequests.forEach(request => {
-                if (request.action === 'pending') {
+                if (request.status === 'Approved') {
                     const carId = request.carId; // Assuming this field exists in the rental request
                     const totalPrice = request.totalPrice; // Assuming this field exists in the rental request
                     const brand = carBrandMap[carId]; // Get brand from the map
@@ -378,7 +378,51 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchRentalRequestsAndCalculateRevenue();
 });
 
+function calculateOverdue(endDate, returnDate) {
+    const end = new Date(endDate);
+    const returnD = new Date(returnDate);
+    
+    // Calculate the difference in time (in milliseconds)
+    const timeDifference = returnD - end;
+    
+    // Convert milliseconds to days
+    const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    
+    // If return date is after the end date
+    if (dayDifference > 0) {
+        return dayDifference; // Number of overdue days
+    } else {
+        return 0; // No overdue
+    }
+}
 
+async function handleReturnButtonClick(rentalId) {
+    const rentalRequests = await getAllRentalRequests();
+
+    // Find the rental request by ID
+    const rental = rentalRequests.find(r => r.id === rentalId);
+
+    if (rental) {
+        const currentDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
+        const overdueDays = calculateOverdue(rental.endDate, currentDate);
+        
+        if (overdueDays > 0) {
+            console.log(`Car is overdue by ${overdueDays} days.`);
+            // You can update the UI to show this information
+            alert(`Car is overdue by ${overdueDays} days.`);
+        } else {
+            console.log('Car is returned on time.');
+            alert('Car is returned on time.');
+        }
+
+        // Update the rental status in the backend (optional)
+        await updateRentalStatus(rentalId, 'returned');
+    } else {
+        console.error('Rental request not found');
+    }
+}
+calculateOverdue();
+fetchAvailableCars();
 // Call the function to fetch available cars
 
 
