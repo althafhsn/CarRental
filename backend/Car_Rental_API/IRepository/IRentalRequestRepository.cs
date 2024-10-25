@@ -7,6 +7,7 @@ namespace Car_Rental_API.IRepository
         RentalRequest AddRentalRequest(RentalRequest rentalRequest);
         ICollection<RentalRequest> GetRentalRequest();
         RentalRequest GetRentalRequestById(string rentalId);
-        bool UpdateRentalRequestStatus(string rentalId, string status);
+        //bool UpdateRentalRequestStatus(string rentalId, string status);
+        bool UpdateRentalRequestAction(string rentalId, string action);
     }
 }

@@ -65,15 +65,15 @@ function searchTable(tableRows, searchValue) {
 // Initialize the search when the page is loaded
 
 
-async function updateRentalRequestStatus(requestId, status) {
+async function updateRentalRequestStatus(requestId, action) {
     try {
         // Send the PUT request to update the status
-        const response = await fetch('http://localhost:5034/api/RentalRequest/updateStatus', {
+        const response = await fetch('http://localhost:5034/api/RentalRequest/updateAction', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ rentalId: requestId, status })
+            body: JSON.stringify({ rentalId: requestId, action })
         });
 
         // Check if the request was successful
@@ -88,7 +88,7 @@ async function updateRentalRequestStatus(requestId, status) {
         const statusContainer = document.querySelector(`#status-container-${requestId}`);
         if (statusContainer) {
             // Replace the buttons with the status text
-            statusContainer.innerHTML = `<span class="badge bg-${status === 'Approved' ? 'success' : 'danger'}">${status}</span>`;
+            statusContainer.innerHTML = `<span class="badge bg-${action === 'Approved' ? 'success' : 'danger'}">${action}</span>`;
         }
 
     } catch (error) {
@@ -104,14 +104,13 @@ document.addEventListener('click', (event) => {
 
     if (approveButton || rejectButton) {
         const requestId = event.target.closest('.edit-btn').getAttribute('data-request-id');
-        const status = approveButton ? 'Approved' : 'Rejected';
+        const action = rejectButton ? 'Rejected' : 'Approved';
 
         // Call the function to update the rental request status
-        updateRentalRequestStatus(requestId, status);
+        updateRentalRequestStatus(requestId, action);
     }
 });
 
-// Function to display the rental requests in the table
 // Function to display the rental requests in the table
 function displayRentalRequest(requests) {
   const tableBody = document.querySelector('#rentalTable tbody');
@@ -131,8 +130,8 @@ function displayRentalRequest(requests) {
           <td>${request.duration}</td>
           <td>${request.totalPrice}</td>
           <td id="status-container-${request.rentalId}">
-              ${request.status === 'Approved' || request.status === 'Rejected' ? 
-                  `<span class="badge bg-${request.status === 'Approved' ? 'success' : 'danger'}">${request.status}</span>` :
+              ${request.action === 'Approved' || request.action === 'Rejected' ? 
+                  `<span class="badge bg-${request.action === 'Approved' ? 'success' : 'danger'}">${request.action}</span>` :
                   ` 
                   <button class="btn btn-outline-primary edit-btn" data-request-id="${request.rentalId}">
                       <i class="fa-solid fa-check"></i>
@@ -144,7 +143,7 @@ function displayRentalRequest(requests) {
               }
           </td>
           <td>
-              <button class="btn btn-outline-primary return-btn" data-rental-id="${request.rentalId}" ${request.status === 'Approved' ? '' : 'disabled'}onclick="handleReturnButtonClick('rentalId')">
+              <button class="btn btn-outline-primary return-btn" data-rental-id="${request.rentalId}" ${request.action === 'Approved' ? '' : 'disabled'}onclick="handleReturnButtonClick('rentalId')">
                   Return
               </button>
           </td>
@@ -942,7 +941,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Function to open edit modal for users
 async function openUserEditModal(userId) {
   try {
-      const response = await fetch(`http://localhost:5034/api/Customer/GetCustomerById?customerId=${userId}`);
+      const response = await fetch(`http://localhost:5034/api/Customer/GetCustomerById/customerId=${userId}`);
       if (!response.ok) {
           throw new Error(`User not found (status: ${response.status})`);
       }

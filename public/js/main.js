@@ -188,7 +188,7 @@ function displayRentalHistory(rentalRequests, carMap, loggedInUserId) {
                 <td>${new Date(request.startDate).toLocaleDateString()}</td>
                 <td>${new Date(request.endDate).toLocaleDateString()}</td>
                 <td>${request.totalPrice.toFixed(2)}</td>
-                <td>${request.status}</td>
+                <td>${request.action}</td>
             `;
             rentalHistoryBody.appendChild(row);
         }
