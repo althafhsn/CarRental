@@ -128,16 +128,16 @@ namespace Car_Rental_API.Repository
             return null;
 
         }
-        public bool UpdateRentalRequestStatus(string rentalId, string status)
+        public bool UpdateRentalRequestAction(string rentalId, string action)
         {
-            string updateQuery = @"UPDATE RentalRequests SET Status = @status WHERE RentalId = @rentalId";
+            string updateQuery = @"UPDATE RentalRequests SET Action = @action WHERE RentalId = @rentalId";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
                 using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                 {
-                    cmd.Parameters.AddWithValue("@status", status);
+                    cmd.Parameters.AddWithValue("@action", action);
                     cmd.Parameters.AddWithValue("@rentalId", rentalId);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -145,5 +145,23 @@ namespace Car_Rental_API.Repository
                 }
             }
         }
+
+        //public bool UpdateRentalRequestStatus(string rentalId, string status)
+        //{
+        //    string updateQuery = @"UPDATE RentalRequests SET Status = @status WHERE RentalId = @rentalId";
+
+        //    using (SqlConnection conn = new SqlConnection(_connectionString))
+        //    {
+        //        conn.Open();
+        //        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@status", status);
+        //            cmd.Parameters.AddWithValue("@rentalId", rentalId);
+
+        //            int rowsAffected = cmd.ExecuteNonQuery();
+        //            return rowsAffected > 0;  // Return true if update is successful
+        //        }
+        //    }
+        //}
     }
 }   

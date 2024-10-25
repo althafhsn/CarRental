@@ -64,20 +64,20 @@ namespace Car_Rental_API.Controllers
             }
         }
 
-        [HttpPut("updateStatus")]
-        public IActionResult UpdateRentalRequestStatus([FromBody] UpdateStatusRequestcs updateRequest)
+        [HttpPut("updateAction")]
+        public IActionResult UpdateRentalRequestAction([FromBody] UpdateActionRequest updateAction)
         {
-            if (updateRequest == null || string.IsNullOrEmpty(updateRequest.RentalId) || string.IsNullOrEmpty(updateRequest.Status))
+            if (updateAction == null || string.IsNullOrEmpty(updateAction.RentalId) || string.IsNullOrEmpty(updateAction.Action))
             {
                 return BadRequest("Invalid request data");
             }
 
             try
             {
-                var isUpdated = rentalRequestRepository.UpdateRentalRequestStatus(updateRequest.RentalId, updateRequest.Status);
+                var isUpdated = rentalRequestRepository.UpdateRentalRequestAction(updateAction.RentalId, updateAction.Action);
                 if (isUpdated)
                 {
-                    return Ok(new { message = "Rental request status updated successfully" });
+                    return Ok(new { message = "Rental request action updated successfully" });
                 }
                 else
                 {
@@ -89,5 +89,31 @@ namespace Car_Rental_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        //[HttpPut("updateStatus")]
+        //public IActionResult UpdateRentalRequestStatus([FromBody] UpdateStatusRequestcs updateRequest)
+        //{
+        //    if (updateRequest == null || string.IsNullOrEmpty(updateRequest.RentalId) || string.IsNullOrEmpty(updateRequest.Status))
+        //    {
+        //        return BadRequest("Invalid request data");
+        //    }
+
+        //    try
+        //    {
+        //        var isUpdated = rentalRequestRepository.UpdateRentalRequestStatus(updateRequest.RentalId, updateRequest.Status);
+        //        if (isUpdated)
+        //        {
+        //            return Ok(new { message = "Rental request status updated successfully" });
+        //        }
+        //        else
+        //        {
+        //            return NotFound("Rental request not found");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
     }
 }
