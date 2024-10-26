@@ -13,13 +13,14 @@
     public int Year { get; set; }
    public string RegNo { get; set; }
     public decimal DailyPrice { get; set; }
+    public string Status    { get; set; }
 
     // Parameterless constructor required for model binding
     public Car()
     {
     }
 
-    public Car(string carId, string imagePath, string brand, string model, string gearType, int seatCount, string fuelType, int mileage, int year, string regNo,decimal dailyPrice)
+    public Car(string carId, string imagePath, string brand, string model, string gearType, int seatCount, string fuelType, int mileage, int year, string regNo,decimal dailyPrice, string status)
     {
         CarId = carId;
         ImagePath = imagePath;
@@ -32,6 +33,7 @@
         Year = year;
         RegNo = regNo;
         DailyPrice = dailyPrice;
+        Status = status;
     }
 
     // Constructor with parameters

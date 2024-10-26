@@ -33,7 +33,8 @@ namespace Car_Rental_API.Controllers
                 car.Mileage,
                 car.Year,
                 car.RegNo,
-                car.DailyPrice
+                car.DailyPrice,
+                car.Status
      );
 
            var carData = _carRepository.CreateCar(carObj);

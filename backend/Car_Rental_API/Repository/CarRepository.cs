@@ -1,10 +1,8 @@
-﻿using Car_Rental_API.Entity;
+﻿
 using Car_Rental_API.IRepository;
 using Car_Rental_API.Model;
 using Microsoft.Data.SqlClient;
-using Microsoft.VisualBasic.FileIO;
-using System.Reflection;
-using System.Text.RegularExpressions;
+
 
 namespace Car_Rental_API.Repository
 {
@@ -22,8 +20,8 @@ namespace Car_Rental_API.Repository
             try
             {
                 // Removed CarId from the insert query since it's an identity column
-                string insertQuery = @"INSERT INTO Cars (CarId,ImagePath,Brand,Model,GearType,SeatCount,FuelType,Mileage,Year,RegNo,DailyPrice)
-                                       VALUES (@carId,@imagePath,@brand,@model,@gearType,@seatCount,@fuelType,@mileage,@year,@regNo,@dailyPrice);";
+                string insertQuery = @"INSERT INTO Cars (CarId,ImagePath,Brand,Model,GearType,SeatCount,FuelType,Mileage,Year,RegNo,DailyPrice,Status)
+                                       VALUES (@carId,@imagePath,@brand,@model,@gearType,@seatCount,@fuelType,@mileage,@year,@regNo,@dailyPrice,@status);";
                 // Use _connectionString passed from the constructor
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
@@ -42,6 +40,7 @@ namespace Car_Rental_API.Repository
                         command.Parameters.AddWithValue("@year", car.Year);
                         command.Parameters.AddWithValue("@regNo", car.RegNo);
                         command.Parameters.AddWithValue("@dailyPrice", car.DailyPrice);
+                        command.Parameters.AddWithValue("@status", car.Status);
 
                         command.ExecuteNonQuery(); // Execute the query
                         Console.WriteLine("Car added successfully.");
@@ -73,17 +72,20 @@ namespace Car_Rental_API.Repository
                         while (reader.Read())
                         {
                             Car car = new Car(
-                               reader.GetString(0),
-                              reader.GetString(1),
+                                reader.GetString(0),
+                                reader.GetString(1),
                                 reader.GetString(2),
-                               reader.GetString(3),
-                               reader.GetString(4),
-                               reader.GetInt32(5),
-                               reader.GetString(6),
-                               reader.GetInt32(7),
+                                reader.GetString(3),
+                                reader.GetString(4),
+                                reader.GetInt32(5),
+                                reader.GetString(6),
+                                reader.GetInt32(7),
                                 reader.GetInt32(8),
                                 reader.GetString(9),
-                                reader.GetDecimal(10)
+                                reader.GetDecimal(10),
+                                reader.GetString(11)
+
+
                             );
                             cars.Add(car);
                         }
@@ -99,7 +101,7 @@ namespace Car_Rental_API.Repository
             return cars;
         }
 
-        public Car 
+        public Car
             GetCarById(string carId)
         {
             string getQuery = @"SELECT * FROM Cars WHERE CarId = @carId";
@@ -118,16 +120,17 @@ namespace Car_Rental_API.Repository
                             {
                                 return new Car(
                                     reader.GetString(0),
-                                  reader.GetString(1),
+                                    reader.GetString(1),
                                     reader.GetString(2),
-                                   reader.GetString(3),
-                                   reader.GetString(4),
-                                   reader.GetInt32(5),
-                                   reader.GetString(6),
-                                   reader.GetInt32(7),
+                                    reader.GetString(3),
+                                    reader.GetString(4),
+                                    reader.GetInt32(5),
+                                    reader.GetString(6),
+                                    reader.GetInt32(7),
                                     reader.GetInt32(8),
                                     reader.GetString(9),
-                                    reader.GetDecimal(10)
+                                    reader.GetDecimal(10),
+                                    reader.GetString(11)
 
                                 );
                             }
@@ -136,7 +139,7 @@ namespace Car_Rental_API.Repository
                                 throw new Exception("Car id not found");
                             }
                         }
-                       
+
                     }
 
                 }
@@ -146,59 +149,59 @@ namespace Car_Rental_API.Repository
                 Console.WriteLine($"Error: {ex.Message}");
                 return null;
             }
-           
+
         }
         public CarUpdateRequest UpdateCar(string carId, CarUpdateRequest carUpdateRequest)
         {
-            
-                var car = GetCarById(carId);
-                string updateQuery = @"UPDATE Cars SET Brand=@brand,Model=@model,GearType=@gearType,SeatCount=@seatCount,FuelType=@fuelType,Mileage=@mileage,Year=@year,RegNo=@regNo, DailyPrice=@dailyPrice WHERE CarId=@carId";
-                using (SqlConnection conn = new SqlConnection(_connectionString))
-                {
-                    conn.Open();
-                    using (SqlCommand command = new SqlCommand(updateQuery, conn))
-                    {
-                        command.Parameters.AddWithValue("@carId", carId);
-                        command.Parameters.AddWithValue("@brand", carUpdateRequest.Brand);
-                        command.Parameters.AddWithValue("@model", carUpdateRequest.Model);
-                        command.Parameters.AddWithValue("@gearType", carUpdateRequest.GearType);
-                        command.Parameters.AddWithValue("@seatCount", carUpdateRequest.SeatCount);
-                        command.Parameters.AddWithValue("@fuelType", carUpdateRequest.FuelType);
-                        command.Parameters.AddWithValue("@mileage", carUpdateRequest.Mileage);
-                        command.Parameters.AddWithValue("@year", carUpdateRequest.Year);
-                        command.Parameters.AddWithValue("@regNo", carUpdateRequest.RegNo);
-                        command.Parameters.AddWithValue("@dailyPrice", carUpdateRequest.DailyPrice);
 
-                        command.ExecuteNonQuery();
-                      
-                    }
+            var car = GetCarById(carId);
+            string updateQuery = @"UPDATE Cars SET Brand=@brand,Model=@model,GearType=@gearType,SeatCount=@seatCount,FuelType=@fuelType,Mileage=@mileage,Year=@year,RegNo=@regNo, DailyPrice=@dailyPrice WHERE CarId=@carId";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlCommand command = new SqlCommand(updateQuery, conn))
+                {
+                    command.Parameters.AddWithValue("@carId", carId);
+                    command.Parameters.AddWithValue("@brand", carUpdateRequest.Brand);
+                    command.Parameters.AddWithValue("@model", carUpdateRequest.Model);
+                    command.Parameters.AddWithValue("@gearType", carUpdateRequest.GearType);
+                    command.Parameters.AddWithValue("@seatCount", carUpdateRequest.SeatCount);
+                    command.Parameters.AddWithValue("@fuelType", carUpdateRequest.FuelType);
+                    command.Parameters.AddWithValue("@mileage", carUpdateRequest.Mileage);
+                    command.Parameters.AddWithValue("@year", carUpdateRequest.Year);
+                    command.Parameters.AddWithValue("@regNo", carUpdateRequest.RegNo);
+                    command.Parameters.AddWithValue("@dailyPrice", carUpdateRequest.DailyPrice);
+
+                    command.ExecuteNonQuery();
+
                 }
-           
+            }
+
             return carUpdateRequest;
         }
 
         public void DeleteCar(string carId)
         {
-                string deleteQuery = @"DELETE FROM Cars WHERE CarId=@carId";
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+            string deleteQuery = @"DELETE FROM Cars WHERE CarId=@carId";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
                 {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@carId", carId);
-                        int rowsAffected = cmd.ExecuteNonQuery();  // Capture affected rows
+                    cmd.Parameters.AddWithValue("@carId", carId);
+                    int rowsAffected = cmd.ExecuteNonQuery();  // Capture affected rows
 
-                        if (rowsAffected > 0)
-                        {
-                            Console.WriteLine("Car deleted successfully");
-                        }
-                        else
-                        {
-                            Console.WriteLine("No car found with the specified ID");
-                        }
+                    if (rowsAffected > 0)
+                    {
+                        Console.WriteLine("Car deleted successfully");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No car found with the specified ID");
                     }
                 }
-           
+            }
+
         }
 
 
