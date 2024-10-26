@@ -21,8 +21,8 @@ async function fetchAndDisplayCars(filterCriteria = {}) {
             // Loop through each filtered car and create the card HTML
             filteredCars.forEach(car => {
                 const cardHTML = `
-                    <div class="col">
-                        <div class="card car-card">
+                    <div class="col ">
+                        <div class="card car-card ${car.status}">
                             <label class="form-label d-none">${car.carId}</label>
                             <div class="col-12">
                                 <img src="${car.imagePath}" class="card-img-top" alt="${car.model}">
@@ -68,6 +68,7 @@ async function fetchAndDisplayCars(filterCriteria = {}) {
                 // Append the card HTML to the container
                 showCarCard.innerHTML += cardHTML;
             });
+
 
             // Attach click event listener to all rent buttons
             document.querySelectorAll('.rent-btn').forEach(button => {

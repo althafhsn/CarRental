@@ -608,7 +608,9 @@ async function submitCarForm() {
         mileage: mileage.value,
         year: carYear.value,
         regNo: regNo.value,
-        dailyPrice: dayPrice.value
+        dailyPrice: dayPrice.value,
+        status : "show"
+
     };
 
     if (!Object.values(carData).every(value => value.trim() !== '' && value !== null)) {
@@ -712,7 +714,7 @@ function displayCarsInTable(cars) {
         const row = document.createElement('tr');
 
         row.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td>${index + 1} ${car.status}</td>
                     <td>${car.carId}</td>
                     <td>${car.regNo}</td>
                     <td style="text-align: center;"><img src="${car.imagePath}" alt="" style="width: 36px; height: 36px; border-radius: 10%; "></td>
