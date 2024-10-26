@@ -4,5 +4,6 @@
     {
         public string RentalId { get; set; }
         public string Action {  get; set; }
+        public string Status { get; set; }
     }
 }

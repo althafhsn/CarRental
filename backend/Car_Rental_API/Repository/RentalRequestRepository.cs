@@ -1,5 +1,6 @@
 ﻿using Car_Rental_API.Entity;
 using Car_Rental_API.IRepository;
+using Car_Rental_API.Model;
 using Microsoft.Data.SqlClient;
 
 namespace Car_Rental_API.Repository
@@ -128,23 +129,56 @@ namespace Car_Rental_API.Repository
             return null;
 
         }
-        public bool UpdateRentalRequestAction(string rentalId, string action)
+        public bool UpdateRentalRequestAction(UpdateActionRequest updateAction)
         {
-            string updateQuery = @"UPDATE RentalRequests SET Action = @action WHERE RentalId = @rentalId";
+            string updateQuery = @"UPDATE RentalRequests SET Action = @action, Status = @status WHERE RentalId = @rentalId";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
                 using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                 {
-                    cmd.Parameters.AddWithValue("@action", action);
-                    cmd.Parameters.AddWithValue("@rentalId", rentalId);
+                    cmd.Parameters.AddWithValue("@rentalId", updateAction.RentalId);
+                    cmd.Parameters.AddWithValue("@action",updateAction.Action);
+                    cmd.Parameters.AddWithValue("@status", updateAction.Status);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
                     return rowsAffected > 0;  // Return true if update is successful
                 }
             }
         }
+
+        //public ICollection<GetStatusRequest> GetRentalRequestStatus(string rentalId)
+        //{
+        //    var status = new List<GetStatusRequest>();
+        //    string query = @"SELECT Status CarId FROM RentalRequests WHERE RentalId = @rentalId";
+        //    using (SqlConnection conn = new SqlConnection(_connectionString))
+        //    {
+        //        conn.Open();
+        //        using (SqlCommand cmd = new SqlCommand(query, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@rentalId",rentalId);
+        //            //    cmd.Parameters.AddWithValue(@"carId", getStatus.CarId);
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                while (reader.Read())
+        //                {
+
+        //                    status.Add(new GetStatusRequest()
+        //                    {
+        //                        RentalId = reader.GetString(0),
+        //                        CarId = reader.GetString(1),
+        //                        Status = reader.GetString(2)
+        //                    });
+
+        //                }
+
+
+        //            }
+        //        }
+        //    }
+        //    return status;
+        //}
 
         //public bool UpdateRentalRequestStatus(string rentalId, string status)
         //{

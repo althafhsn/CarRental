@@ -65,7 +65,7 @@ function searchTable(tableRows, searchValue) {
 // Initialize the search when the page is loaded
 
 
-async function updateRentalRequestStatus(requestId, action) {
+async function updateRentalRequestStatus(requestId, action, status) {
     try {
         // Send the PUT request to update the status
         const response = await fetch('http://localhost:5034/api/RentalRequest/updateAction', {
@@ -73,7 +73,7 @@ async function updateRentalRequestStatus(requestId, action) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ rentalId: requestId, action })
+            body: JSON.stringify({ rentalId: requestId, action, status })
         });
 
         // Check if the request was successful
@@ -105,9 +105,10 @@ document.addEventListener('click', (event) => {
     if (approveButton || rejectButton) {
         const requestId = event.target.closest('.edit-btn').getAttribute('data-request-id');
         const action = rejectButton ? 'Rejected' : 'Approved';
+        const status = approveButton ? 'hidden' : 'cenceled'
 
         // Call the function to update the rental request status
-        updateRentalRequestStatus(requestId, action);
+        updateRentalRequestStatus(requestId, action,status);
     }
 });
 
@@ -143,7 +144,7 @@ function displayRentalRequest(requests) {
               }
           </td>
           <td>
-              <button class="btn btn-outline-primary return-btn" data-rental-id="${request.rentalId}" ${request.action === 'Approved' ? '' : 'disabled'}onclick="handleReturnButtonClick('rentalId')">
+              <button class="btn btn-outline-primary return-btn" data-rental-id="${request.rentalId}" ${request.action === 'Rejected' ? 'disabled' : ''}onclick="handleReturnButtonClick('rentalId')">
                   Return
               </button>
           </td>

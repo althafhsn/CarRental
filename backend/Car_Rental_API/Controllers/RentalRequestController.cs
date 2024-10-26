@@ -67,14 +67,14 @@ namespace Car_Rental_API.Controllers
         [HttpPut("updateAction")]
         public IActionResult UpdateRentalRequestAction([FromBody] UpdateActionRequest updateAction)
         {
-            if (updateAction == null || string.IsNullOrEmpty(updateAction.RentalId) || string.IsNullOrEmpty(updateAction.Action))
+            if (updateAction == null || string.IsNullOrEmpty(updateAction.RentalId) || string.IsNullOrEmpty(updateAction.Action) || string.IsNullOrEmpty(updateAction.Status))
             {
                 return BadRequest("Invalid request data");
             }
 
             try
             {
-                var isUpdated = rentalRequestRepository.UpdateRentalRequestAction(updateAction.RentalId, updateAction.Action);
+                var isUpdated = rentalRequestRepository.UpdateRentalRequestAction(updateAction);
                 if (isUpdated)
                 {
                     return Ok(new { message = "Rental request action updated successfully" });
@@ -89,6 +89,13 @@ namespace Car_Rental_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        //[HttpGet("get-Status")]
+        //public IActionResult GetRentalRequestStatus(string rentalId)
+        //{
+        //    var status = rentalRequestRepository.GetRentalRequestStatus(rentalId);
+        //    return Ok(status);
+        //}
 
         //[HttpPut("updateStatus")]
         //public IActionResult UpdateRentalRequestStatus([FromBody] UpdateStatusRequestcs updateRequest)
