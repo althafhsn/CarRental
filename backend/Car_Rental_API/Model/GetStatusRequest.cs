@@ -1,8 +1,8 @@
 ﻿namespace Car_Rental_API.Model
 {
-    public class UpdateStatusRequestcs
+    public class GetStatusRequest
     {
-        public string RentalId { get; set; }
+        public string CarId { get; set; }
         public string Status { get; set; }
     }
 }

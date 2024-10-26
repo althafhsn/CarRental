@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
             duration: rentDuration,
             totalPrice: totalCost,
             action: "pending",
-            status: "active",
+            status: " ",
             requestDate: new Date()
         };
 console.log(newRental);
