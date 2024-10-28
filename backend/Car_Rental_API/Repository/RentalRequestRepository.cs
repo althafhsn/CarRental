@@ -16,7 +16,7 @@ namespace Car_Rental_API.Repository
             _connectionString = connectionString;
         }
 
-        public RentalRequest AddRentalRequest(RentalRequest rentalRequest)
+        public async Task<RentalRequest> AddRentalRequest(RentalRequest rentalRequest)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace Car_Rental_API.Repository
                                        VALUES (@rentalId,@carId, @customerId, @startDate, @endDate,@duration,@totalPrice,@action, @status, @requestDate);";
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
                         command.Parameters.AddWithValue("@rentalId", rentalRequest.RentalId);
@@ -38,7 +38,7 @@ namespace Car_Rental_API.Repository
                         command.Parameters.AddWithValue("@status", rentalRequest.Status);
                         command.Parameters.AddWithValue("@requestDate", rentalRequest.RequestDate);
 
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                         Console.WriteLine("Rental request added successfully.");
                     }
                 }
@@ -51,13 +51,13 @@ namespace Car_Rental_API.Repository
             return rentalRequest;
         }
 
-        public ICollection<RentalRequest> GetRentalRequest()
+        public async Task<ICollection<RentalRequest>> GetRentalRequest()
         {
             var retalList = new List<RentalRequest>();
             string query = @"SELECT * FROM RentalRequests";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
 
@@ -89,13 +89,13 @@ namespace Car_Rental_API.Repository
             return retalList;
         }
 
-        public RentalRequest GetRentalRequestById(string rentalId)
+        public async Task<RentalRequest> GetRentalRequestById(string rentalId)
         {
             string getQuery = @"SELECT * FROM RentalRequests WHERE RentalId = @rentalId";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (SqlCommand cmd = new SqlCommand(getQuery, conn))
                 {
 
@@ -133,24 +133,23 @@ namespace Car_Rental_API.Repository
         }
 
 
-        //public bool UpdateRentalRequestAction(UpdateActionRequest updateAction)
-        //{
-        //    string updateQuery = @"UPDATE RentalRequests SET Action = @action, Status = @status WHERE RentalId = @rentalId";
+        public async Task<bool> UpdateRentalRequestAction(UpdateActionRequest updateAction)
+        {
+            string updateQuery = @"UPDATE RentalRequests SET Action = @action WHERE RentalId = @rentalId";
 
-        //    using (SqlConnection conn = new SqlConnection(_connectionString))
-        //    {
-        //        conn.Open();
-        //        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
-        //        {
-        //            cmd.Parameters.AddWithValue("@rentalId", updateAction.RentalId);
-        //            cmd.Parameters.AddWithValue("@action",updateAction.Action);
-        //            cmd.Parameters.AddWithValue("@status", updateAction.Status);
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+                using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@rentalId", updateAction.RentalId);
+                    cmd.Parameters.AddWithValue("@action", updateAction.Action);
 
-        //            int rowsAffected = cmd.ExecuteNonQuery();
-        //            return rowsAffected > 0;  // Return true if update is successful
-        //        }
-        //    }
-        //}
+                    int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                    return rowsAffected > 0;  // Return true if update is successful
+                }
+            }
+        }
 
         //public ICollection<GetStatusRequest> GetRentalRequestStatus(string rentalId)
         //{

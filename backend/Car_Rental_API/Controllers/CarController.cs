@@ -37,24 +37,24 @@ namespace Car_Rental_API.Controllers
                 car.CarStatus
      );
 
-           var carData = _carRepository.CreateCar(carObj);
+           var carData = await _carRepository.CreateCar(carObj);
             return Ok(carData);
         }
 
         [HttpGet("getAllCars")]
-        public IActionResult GetCars()
+        public async Task<IActionResult> GetCars()
         {
-            var carList = _carRepository.GetCars();
+            var carList =await _carRepository.GetCars();
             return Ok(carList);
         }
 
         [HttpGet("GetCarById")]
 
-        public IActionResult GetCarById(string carId)
+        public async Task<IActionResult> GetCarById(string carId)
         {
             try
             {
-                var car = _carRepository.GetCarById(carId);
+                var car =await _carRepository.GetCarById(carId);
                 return Ok(car);
             }catch (Exception ex)
             {
@@ -63,11 +63,11 @@ namespace Car_Rental_API.Controllers
         }
 
         [HttpPut("UpdateCarById")]
-        public IActionResult UpdateCar( string carId, CarUpdateRequest carUpdateRequest)
+        public async Task<IActionResult> UpdateCar( string carId, CarUpdateRequest carUpdateRequest)
         {
             try
             {
-                _carRepository.UpdateCar(carId, carUpdateRequest);
+               await _carRepository.UpdateCar(carId, carUpdateRequest);
                 return Ok(carUpdateRequest);
             }catch (Exception ex)
             {
@@ -76,7 +76,7 @@ namespace Car_Rental_API.Controllers
         }
 
         [HttpDelete("DeleteById")]
-        public IActionResult DeleteCar(string carId)
+        public async Task<IActionResult> DeleteCar(string carId)
         {
             try
             {
@@ -85,6 +85,24 @@ namespace Car_Rental_API.Controllers
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("UpdateCarById{carId}")]
+        public async Task<IActionResult> UpdateCarStatus(string carId, UpdateCarStatusRequest updateCarStatus)
+        {
+            try
+            {
+                var status = await _carRepository.UpdateCarStatus(carId, updateCarStatus);
+
+                // Wrap the result in an object
+                var response = status;
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
             }
         }
     }

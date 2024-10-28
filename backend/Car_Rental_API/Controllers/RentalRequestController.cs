@@ -44,7 +44,7 @@ namespace Car_Rental_API.Controllers
         [HttpGet("getAllRentalRequests")]
         public async Task<IActionResult> GetRentalRequest()
         {
-            var rentalList = await rentalRequestRepository.GetRentalRequestAsync();
+            var rentalList = await rentalRequestRepository.GetRentalRequest();
             return Ok(rentalList);
         }
 
@@ -67,7 +67,7 @@ namespace Car_Rental_API.Controllers
         [HttpPut("updateAction")]
         public async Task<IActionResult> UpdateRentalRequestAction( UpdateActionRequest updateAction)
         {
-            if (updateAction == null || string.IsNullOrEmpty(updateAction.RentalId) || string.IsNullOrEmpty(updateAction.Action) || string.IsNullOrEmpty(updateAction.Status))
+            if (updateAction == null || string.IsNullOrEmpty(updateAction.RentalId) || string.IsNullOrEmpty(updateAction.Action))
             {
                 return BadRequest("Invalid request data");
             }
@@ -77,7 +77,7 @@ namespace Car_Rental_API.Controllers
                 var isUpdated = await rentalRequestRepository.UpdateRentalRequestAction(updateAction);
                 if (isUpdated)
                 {
-                    return Ok(new { message = "Rental request action updated successfully" });
+                    return Ok(isUpdated);
                 }
                 else
                 {

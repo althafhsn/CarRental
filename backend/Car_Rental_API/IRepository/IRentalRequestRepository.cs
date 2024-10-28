@@ -6,8 +6,8 @@ namespace Car_Rental_API.IRepository
 {
     public interface IRentalRequestRepository
     {
-         Task<RentalRequest> AddRentalRequest(RentalRequest rentalRequest);
-        Task<ICollection<RentalRequest>> GetRentalRequestAsync();
+        Task<RentalRequest> AddRentalRequest(RentalRequest rentalRequest);
+        Task<ICollection<RentalRequest>> GetRentalRequest();
         Task<RentalRequest> GetRentalRequestById(string rentalId);
         //bool UpdateRentalRequestStatus(string rentalId, string status);
         Task<bool> UpdateRentalRequestAction(UpdateActionRequest updateAction);

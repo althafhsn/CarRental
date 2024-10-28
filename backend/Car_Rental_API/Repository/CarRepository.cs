@@ -15,7 +15,7 @@ namespace Car_Rental_API.Repository
             _connectionString = connectionString;
         }
 
-        public Car CreateCar(Car car)
+        public async Task<Car> CreateCar(Car car)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace Car_Rental_API.Repository
                 // Use _connectionString passed from the constructor
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
                         // Bind the parameters
@@ -42,7 +42,7 @@ namespace Car_Rental_API.Repository
                         command.Parameters.AddWithValue("@dailyPrice", car.DailyPrice);
                         command.Parameters.AddWithValue("@status", car.CarStatus);
 
-                        command.ExecuteNonQuery(); // Execute the query
+                        await command.ExecuteNonQueryAsync(); // Execute the query
                         Console.WriteLine("Car added successfully.");
                     }
                 }
@@ -56,7 +56,7 @@ namespace Car_Rental_API.Repository
             return car;
         }
 
-        public ICollection<Car> GetCars()
+        public async Task<ICollection<Car>> GetCars()
         {
 
             List<Car> cars = new List<Car>();
@@ -66,7 +66,7 @@ namespace Car_Rental_API.Repository
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     SqlCommand cmd = new SqlCommand(query, conn);
-                    conn.Open();
+                    await conn.OpenAsync();
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -101,8 +101,7 @@ namespace Car_Rental_API.Repository
             return cars;
         }
 
-        public Car
-            GetCarById(string carId)
+        public async Task<Car> GetCarById(string carId)
         {
             string getQuery = @"SELECT * FROM Cars WHERE CarId = @carId";
             try
@@ -111,7 +110,7 @@ namespace Car_Rental_API.Repository
                 {
                     using (SqlCommand cmd = new SqlCommand(getQuery, conn))
                     {
-                        conn.Open();
+                        await conn.OpenAsync();
                         cmd.Parameters.AddWithValue("@carId", carId);
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
@@ -151,14 +150,14 @@ namespace Car_Rental_API.Repository
             }
 
         }
-        public CarUpdateRequest UpdateCar(string carId, CarUpdateRequest carUpdateRequest)
+        public async Task<CarUpdateRequest> UpdateCar(string carId, CarUpdateRequest carUpdateRequest)
         {
 
             var car = GetCarById(carId);
             string updateQuery = @"UPDATE Cars SET Brand=@brand,Model=@model,GearType=@gearType,SeatCount=@seatCount,FuelType=@fuelType,Mileage=@mileage,Year=@year,RegNo=@regNo, DailyPrice=@dailyPrice WHERE CarId=@carId";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (SqlCommand command = new SqlCommand(updateQuery, conn))
                 {
                     command.Parameters.AddWithValue("@carId", carId);
@@ -172,7 +171,7 @@ namespace Car_Rental_API.Repository
                     command.Parameters.AddWithValue("@regNo", carUpdateRequest.RegNo);
                     command.Parameters.AddWithValue("@dailyPrice", carUpdateRequest.DailyPrice);
 
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
 
                 }
             }
@@ -180,12 +179,12 @@ namespace Car_Rental_API.Repository
             return carUpdateRequest;
         }
 
-        public void DeleteCar(string carId)
+        public async void DeleteCar(string carId)
         {
             string deleteQuery = @"DELETE FROM Cars WHERE CarId=@carId";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
                 {
                     cmd.Parameters.AddWithValue("@carId", carId);
@@ -203,7 +202,26 @@ namespace Car_Rental_API.Repository
             }
 
         }
+        public async Task<UpdateCarStatusRequest> UpdateCarStatus(string carId, UpdateCarStatusRequest updateCarStatus)
+        {
 
+            var car = GetCarById(carId);
+            string updateQuery = @"UPDATE Cars SET CarStatus=@carstatus WHERE CarId=@carId";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+                using (SqlCommand command = new SqlCommand(updateQuery, conn))
+                {
+                    command.Parameters.AddWithValue("@carId", carId);
+                    command.Parameters.AddWithValue("@carStatus", updateCarStatus.CarStatus);
+
+                    await command.ExecuteNonQueryAsync();
+
+                }
+            }
+
+            return  updateCarStatus;
+        }
 
 
 

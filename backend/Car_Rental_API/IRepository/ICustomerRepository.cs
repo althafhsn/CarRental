@@ -6,10 +6,10 @@ namespace Car_Rental_API.IRepository
 {
     public interface ICustomerRepository
     {
-        Customer AddCustomer(Customer customer);
-        ICollection<Customer> GetCustomer();
-        Customer GetCustomerById(string customerId);
-        UpdateCustomerRequest UpdateCustomer(string customerId, UpdateCustomerRequest updateCustomerRequest);
+        Task<Customer> AddCustomer(Customer customer);
+        Task<ICollection<Customer>> GetCustomer();
+        Task<Customer> GetCustomerById(string customerId);
+        Task<UpdateCustomerRequest> UpdateCustomer(string customerId, UpdateCustomerRequest updateCustomerRequest);
         void DeleteCustomer(string customerId);
     }
 }

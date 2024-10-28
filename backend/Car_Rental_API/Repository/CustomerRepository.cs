@@ -17,7 +17,7 @@ namespace Car_Rental_API.Repository
             _connectionString = connectionString;
         }
 
-        public Customer AddCustomer(Customer customer)
+        public async Task<Customer> AddCustomer(Customer customer)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace Car_Rental_API.Repository
                 // Use _connectionString passed from the constructor
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
                         // Bind the parameters
@@ -42,7 +42,7 @@ namespace Car_Rental_API.Repository
                         command.Parameters.AddWithValue("@password", customer.Password);
 
 
-                        command.ExecuteNonQuery(); // Execute the query
+                        await command.ExecuteNonQueryAsync(); // Execute the query
                         Console.WriteLine("Customer added successfully.");
                     }
                 }
@@ -56,13 +56,13 @@ namespace Car_Rental_API.Repository
             return customer;
         }
 
-        public ICollection<Customer> GetCustomer()
+        public async Task<ICollection<Customer>> GetCustomer()
         {
             var customers = new List<Customer>();
             string query = @"SELECT * FROM Customers";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
 
@@ -93,13 +93,13 @@ namespace Car_Rental_API.Repository
             return customers;
         }
 
-        public Customer GetCustomerById(string customerId)
+        public async Task<Customer> GetCustomerById(string customerId)
         {
             string getQuery = @"SELECT * FROM Customers WHERE CustomerId = @customerId";
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                    await conn.OpenAsync();
                 using (SqlCommand cmd = new SqlCommand(getQuery, conn))
                 {
 
@@ -135,13 +135,13 @@ namespace Car_Rental_API.Repository
 
         }
 
-        public UpdateCustomerRequest UpdateCustomer(string customerId, UpdateCustomerRequest updateCustomerRequest)
+        public async Task<UpdateCustomerRequest> UpdateCustomer(string customerId, UpdateCustomerRequest updateCustomerRequest)
         {
             var cus = GetCustomerById(customerId);
             string updateQuery = @"UPDATE Customers SET FirstName=@firstName,LastName=@lastName,Email=@email,Phone=@phone,Address=@address,Licence=@licence,NIC=@nic WHERE CustomerId= @customerId";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                    await conn.OpenAsync();
                 using (SqlCommand command = new SqlCommand(updateQuery, conn))
                 {
                     command.Parameters.AddWithValue("@customerId", customerId);
@@ -152,7 +152,7 @@ namespace Car_Rental_API.Repository
                     command.Parameters.AddWithValue("@address", updateCustomerRequest.Address);
                     command.Parameters.AddWithValue("@licence", updateCustomerRequest.Licence);
                     command.Parameters.AddWithValue("@nic", updateCustomerRequest.NIC);
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
 
 
                 }
@@ -160,12 +160,12 @@ namespace Car_Rental_API.Repository
             return updateCustomerRequest;
         }
 
-        public void DeleteCustomer(string customerId)
+        public async void DeleteCustomer(string customerId)
         {
             string deleteQuery = @"DELETE FROM Customers WHERE CustomerId=@customerId"; // Corrected SQL query
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
                 {
                     cmd.Parameters.AddWithValue("@customerId", customerId);

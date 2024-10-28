@@ -33,24 +33,24 @@ namespace Car_Rental_API.Controllers
                 customer.Password
                 );
 
-            var customerData = customerRepository.AddCustomer(cusObj);
+            var customerData = await customerRepository.AddCustomer(cusObj);
             return Ok(customerData);
         }
 
         [HttpGet("getAllCustomers")]
-        public IActionResult GetCustomer()
+        public async Task<IActionResult> GetCustomer()
         {
-            var customerList = customerRepository.GetCustomer();
+            var customerList =await customerRepository.GetCustomer();
             return Ok(customerList);
         }
 
         [HttpGet("GetCustomerById")]
 
-        public IActionResult GetCarById(string customerId)
+        public async Task<IActionResult> GetCarById(string customerId)
         {
             try
             {
-                var car = customerRepository.GetCustomerById(customerId);
+                var car =await customerRepository.GetCustomerById(customerId);
                 return Ok(car);
             }
             catch (Exception ex)
@@ -60,11 +60,11 @@ namespace Car_Rental_API.Controllers
         }
 
         [HttpPut("UpdateCustomerById")]
-        public IActionResult UpdateCustomer(string customerId, UpdateCustomerRequest updateCustomerRequest)
+        public async Task<IActionResult> UpdateCustomer(string customerId, UpdateCustomerRequest updateCustomerRequest)
         {
             try
             {
-                customerRepository.UpdateCustomer(customerId, updateCustomerRequest);
+               await customerRepository.UpdateCustomer(customerId, updateCustomerRequest);
                 return Ok(updateCustomerRequest);
             }
             catch (Exception ex)
@@ -74,7 +74,7 @@ namespace Car_Rental_API.Controllers
         }
 
         [HttpDelete("DeleteById")]
-        public IActionResult DeleteCar(string customerId)
+        public async Task<IActionResult> DeleteCar(string customerId)
         {
             try
             {
