@@ -20,7 +20,7 @@ namespace Car_Rental_API.Repository
             try
             {
                 // Removed CarId from the insert query since it's an identity column
-                string insertQuery = @"INSERT INTO Cars (CarId,ImagePath,Brand,Model,GearType,SeatCount,FuelType,Mileage,Year,RegNo,DailyPrice,Status)
+                string insertQuery = @"INSERT INTO Cars (CarId,ImagePath,Brand,Model,GearType,SeatCount,FuelType,Mileage,Year,RegNo,DailyPrice,CarStatus)
                                        VALUES (@carId,@imagePath,@brand,@model,@gearType,@seatCount,@fuelType,@mileage,@year,@regNo,@dailyPrice,@status);";
                 // Use _connectionString passed from the constructor
                 using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -40,7 +40,7 @@ namespace Car_Rental_API.Repository
                         command.Parameters.AddWithValue("@year", car.Year);
                         command.Parameters.AddWithValue("@regNo", car.RegNo);
                         command.Parameters.AddWithValue("@dailyPrice", car.DailyPrice);
-                        command.Parameters.AddWithValue("@status", car.Status);
+                        command.Parameters.AddWithValue("@status", car.CarStatus);
 
                         command.ExecuteNonQuery(); // Execute the query
                         Console.WriteLine("Car added successfully.");

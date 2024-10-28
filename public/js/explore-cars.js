@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 cars.forEach(car => {
                     // Create the car card
                     const cardHTML = `
-                        <div class="col-12 col-md-4 mb-4 ${car.status}">
+                        <div class="col-12 col-md-4 mb-4 ${car.carStatus}">
                             <div class="card car-card ">
                                 <label class="form-label d-none">${car.carId}</label>
                                 <div class="col-12">

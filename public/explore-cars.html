@@ -99,14 +99,14 @@
   </section>
   <!-- Modal for Rental History -->
   <div class="modal fade" id="rentalHistoryModal" tabindex="-1" aria-labelledby="rentalHistoryModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    aria-hidden="true" style="position: absolute; max-height: 100dvh; ">
+    <div class="modal-dialog modal-xl" >
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="rentalHistoryModalLabel">Rental History</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="overflow-y:scroll ;">
           <table class="table table-bordered">
             <thead>
               <tr>
@@ -118,6 +118,7 @@
                 <th>Rent Date</th>
                 <th>Return Date</th>
                 <th>Total Amount</th>
+                <th>Rental Status</th>
               </tr>
             </thead>
             <tbody id="rentalHistoryBody">

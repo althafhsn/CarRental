@@ -38,7 +38,8 @@ namespace Car_Rental_API
                 });
             });
 
-            var app = builder.Build();
+
+             var app = builder.Build();
 
             // Initialize the database
             InitializeDatabase(app);
@@ -79,5 +80,24 @@ namespace Car_Rental_API
                 }
             }
         }
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("http://localhost:5501") // Your client URL
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod());
+            });
+            services.AddControllers();
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseCors("AllowSpecificOrigin");
+            app.UseRouting();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
+
     }
 }

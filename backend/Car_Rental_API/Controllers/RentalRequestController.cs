@@ -42,20 +42,20 @@ namespace Car_Rental_API.Controllers
         }
 
         [HttpGet("getAllRentalRequests")]
-        public IActionResult GetRentalRequest()
+        public async Task<IActionResult> GetRentalRequest()
         {
-            var rentalList = rentalRequestRepository.GetRentalRequest();
+            var rentalList = await rentalRequestRepository.GetRentalRequestAsync();
             return Ok(rentalList);
         }
 
 
         [HttpGet("getAllRentalRequestsById")]
 
-        public IActionResult GetRentalRequestById(string rentalId)
+        public async Task<IActionResult> GetRentalRequestById(string rentalId)
         {
             try
             {
-                var rental = rentalRequestRepository.GetRentalRequestById(rentalId);
+                var rental = await rentalRequestRepository.GetRentalRequestById(rentalId);
                 return Ok(rental);
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace Car_Rental_API.Controllers
         }
 
         [HttpPut("updateAction")]
-        public IActionResult UpdateRentalRequestAction([FromBody] UpdateActionRequest updateAction)
+        public async Task<IActionResult> UpdateRentalRequestAction( UpdateActionRequest updateAction)
         {
             if (updateAction == null || string.IsNullOrEmpty(updateAction.RentalId) || string.IsNullOrEmpty(updateAction.Action) || string.IsNullOrEmpty(updateAction.Status))
             {
@@ -74,7 +74,7 @@ namespace Car_Rental_API.Controllers
 
             try
             {
-                var isUpdated = rentalRequestRepository.UpdateRentalRequestAction(updateAction);
+                var isUpdated = await rentalRequestRepository.UpdateRentalRequestAction(updateAction);
                 if (isUpdated)
                 {
                     return Ok(new { message = "Rental request action updated successfully" });
@@ -89,6 +89,31 @@ namespace Car_Rental_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        //[HttpPut("updateStatusAndAction")]
+        //public async Task<IActionResult> UpdateStatusAndAction(string carId, string carStatus, string rentalId, string action)
+        //{
+        //    try
+        //    {
+        //        var result = await rentalRequestRepository.UpdateCarAndRentalRequest(carId, carStatus, rentalId, action);
+
+        //        if (result.Success)
+        //        {
+        //            return Ok(result.Message); // Returns the success message from the UpdateResult
+        //        }
+        //        else
+        //        {
+        //            return BadRequest(result.Message); // Returns the error message from the UpdateResult
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
+
+
+
+
 
         //[HttpGet("get-Status")]
         //public IActionResult GetRentalRequestStatus(string rentalId)

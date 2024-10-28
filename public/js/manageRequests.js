@@ -105,7 +105,7 @@ document.addEventListener('click', (event) => {
     if (approveButton || rejectButton) {
         const requestId = event.target.closest('.edit-btn').getAttribute('data-request-id');
         const action = rejectButton ? 'Rejected' : 'Approved';
-        const status = approveButton ? 'hidden' : 'cenceled'
+        const status = approveButton ? 'd-none' : 'cenceled'
 
         // Call the function to update the rental request status
         updateRentalRequestStatus(requestId, action,status);

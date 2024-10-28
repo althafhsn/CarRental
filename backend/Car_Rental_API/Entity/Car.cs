@@ -13,7 +13,7 @@
     public int Year { get; set; }
    public string RegNo { get; set; }
     public decimal DailyPrice { get; set; }
-    public string Status    { get; set; }
+    public string CarStatus    { get; set; }
 
     // Parameterless constructor required for model binding
     public Car()
@@ -33,7 +33,7 @@
         Year = year;
         RegNo = regNo;
         DailyPrice = dailyPrice;
-        Status = status;
+        CarStatus = status;
     }
 
     // Constructor with parameters

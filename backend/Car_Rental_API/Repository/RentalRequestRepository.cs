@@ -14,7 +14,7 @@ namespace Car_Rental_API.Repository
             _connectionString = connectionString;
         }
 
-        public RentalRequest AddRentalRequest(RentalRequest rentalRequest)
+        public async Task<RentalRequest> AddRentalRequest(RentalRequest rentalRequest)
         {
             try
             {
@@ -49,22 +49,21 @@ namespace Car_Rental_API.Repository
             return rentalRequest;
         }
 
-        public ICollection<RentalRequest> GetRentalRequest()
+        public async Task<ICollection<RentalRequest>> GetRentalRequestAsync()
         {
-            var retalList = new List<RentalRequest>();
+            var rentalList = new List<RentalRequest>();
             string query = @"SELECT * FROM RentalRequests";
+
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync(); // Open connection asynchronously
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync()) // Execute reader asynchronously
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync()) // Read asynchronously
                         {
-
-                            retalList.Add(new RentalRequest()
+                            rentalList.Add(new RentalRequest()
                             {
                                 RentalId = reader.GetString(0),
                                 CarId = reader.GetString(1),
@@ -77,17 +76,15 @@ namespace Car_Rental_API.Repository
                                 Status = reader.GetString(8),
                                 RequestDate = reader.GetDateTime(9)
                             });
-
                         }
-
-
                     }
                 }
             }
-            return retalList;
+            return rentalList; // No need for 'await' here since returning a non-task
         }
 
-        public RentalRequest GetRentalRequestById(string rentalId)
+
+        public async Task<RentalRequest> GetRentalRequestById(string rentalId)
         {
             string getQuery = @"SELECT * FROM RentalRequests WHERE RentalId = @rentalId";
 
@@ -129,7 +126,8 @@ namespace Car_Rental_API.Repository
             return null;
 
         }
-        public bool UpdateRentalRequestAction(UpdateActionRequest updateAction)
+
+        public async Task<bool> UpdateRentalRequestAction(UpdateActionRequest updateAction)
         {
             string updateQuery = @"UPDATE RentalRequests SET Action = @action, Status = @status WHERE RentalId = @rentalId";
 
@@ -139,7 +137,7 @@ namespace Car_Rental_API.Repository
                 using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                 {
                     cmd.Parameters.AddWithValue("@rentalId", updateAction.RentalId);
-                    cmd.Parameters.AddWithValue("@action",updateAction.Action);
+                    cmd.Parameters.AddWithValue("@action", updateAction.Action);
                     cmd.Parameters.AddWithValue("@status", updateAction.Status);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -147,6 +145,131 @@ namespace Car_Rental_API.Repository
                 }
             }
         }
+
+        //public class UpdateResult
+        //{
+        //    public bool Success { get; set; }
+        //    public string Message { get; set; }
+        //    public string CarId { get; set; }
+        //    public string RentalId { get; set; }
+        //}
+
+        //public async Task<UpdateResult> UpdateCarAndRentalRequest(string carId, string carStatus, string rentalId, string action)
+        //{
+        //    // Validate inputs
+        //    if (string.IsNullOrWhiteSpace(carId))
+        //        throw new ArgumentException("Car ID cannot be null or empty.", nameof(carId));
+        //    if (string.IsNullOrWhiteSpace(carStatus))
+        //        throw new ArgumentException("Car status cannot be null or empty.", nameof(carStatus));
+        //    if (string.IsNullOrWhiteSpace(rentalId))
+        //        throw new ArgumentException("Rental ID cannot be null or empty.", nameof(rentalId));
+        //    if (string.IsNullOrWhiteSpace(action))
+        //        throw new ArgumentException("Action cannot be null or empty.", nameof(action));
+
+        //    // Define SQL queries
+        //    string updateCarQuery = "UPDATE Cars SET CarStatus = @carStatus WHERE CarId = @carId";
+        //    string updateRentalRequestQuery = "UPDATE RentalRequests SET Action = @action WHERE RentalId = @rentalId AND CarId = @carId";
+
+        //    using (SqlConnection conn = new SqlConnection(_connectionString))
+        //    {
+        //        await conn.OpenAsync();
+
+        //        // Update the status in the Cars table
+        //        using (SqlCommand carCommand = new SqlCommand(updateCarQuery, conn))
+        //        {
+        //            carCommand.Parameters.AddWithValue("@carStatus", carStatus);
+        //            carCommand.Parameters.AddWithValue("@carId", carId);
+
+        //            int carUpdateResult = await carCommand.ExecuteNonQueryAsync();
+        //            if (carUpdateResult == 0)
+        //                return new UpdateResult
+        //                {
+        //                    Success = false,
+        //                    Message = "Failed to update the car status. Car ID may be incorrect.",
+        //                    CarId = carId,
+        //                    RentalId = rentalId
+        //                };
+        //        }
+
+        //        // Update the action in the RentalRequests table
+        //        using (SqlCommand rentalRequestCommand = new SqlCommand(updateRentalRequestQuery, conn))
+        //        {
+        //            rentalRequestCommand.Parameters.AddWithValue("@action", action);
+        //            rentalRequestCommand.Parameters.AddWithValue("@rentalId", rentalId);
+        //            rentalRequestCommand.Parameters.AddWithValue("@carId", carId);
+
+        //            int rentalUpdateResult = await rentalRequestCommand.ExecuteNonQueryAsync();
+        //            if (rentalUpdateResult == 0)
+        //                return new UpdateResult
+        //                {
+        //                    Success = false,
+        //                    Message = "Failed to update the rental request. Rental ID or Car ID may be incorrect.",
+        //                    CarId = carId,
+        //                    RentalId = rentalId
+        //                };
+        //        }
+        //    }
+
+        //    return new UpdateResult
+        //    {
+        //        Success = true,
+        //        Message = "Car status and rental request updated successfully.",
+        //        CarId = carId,
+        //        RentalId = rentalId
+        //    };
+        //}
+
+
+        //public async Task<bool> UpdateCarAndRentalRequest(string carId, string carStatus, string rentalId, string action)
+        //{
+        //    // Validate inputs
+        //    if (string.IsNullOrWhiteSpace(carId))
+        //        throw new ArgumentException("Car ID cannot be null or empty.", nameof(carId));
+        //    if (string.IsNullOrWhiteSpace(carStatus))
+        //        throw new ArgumentException("Car status cannot be null or empty.", nameof(carStatus));
+        //    if (string.IsNullOrWhiteSpace(rentalId))
+        //        throw new ArgumentException("Rental ID cannot be null or empty.", nameof(rentalId));
+        //    if (string.IsNullOrWhiteSpace(action))
+        //        throw new ArgumentException("Action cannot be null or empty.", nameof(action));
+
+        //    // Define SQL queries
+        //    string updateCarQuery = "UPDATE Cars SET CarStatus = @carStatus WHERE CarId = @carId";
+        //    string updateRentalRequestQuery = "UPDATE RentalRequests SET Action = @action WHERE RentalId = @rentalId AND CarId = @carId";
+
+        //    using (SqlConnection conn = new SqlConnection(_connectionString))
+        //    {
+        //        await conn.OpenAsync();
+
+        //        // Update the status in the Cars table
+        //        using (SqlCommand carCommand = new SqlCommand(updateCarQuery, conn))
+        //        {
+        //            carCommand.Parameters.AddWithValue("@carStatus", carStatus);
+        //            carCommand.Parameters.AddWithValue("@carId", carId);
+
+        //            int carUpdateResult = await carCommand.ExecuteNonQueryAsync();
+        //            if (carUpdateResult == 0)
+        //                throw new InvalidOperationException("Failed to update the car status. Car ID may be incorrect.");
+        //        }
+
+        //        // Update the action in the RentalRequests table
+        //        using (SqlCommand rentalRequestCommand = new SqlCommand(updateRentalRequestQuery, conn))
+        //        {
+        //            rentalRequestCommand.Parameters.AddWithValue("@action", action);
+        //            rentalRequestCommand.Parameters.AddWithValue("@rentalId", rentalId);
+        //            rentalRequestCommand.Parameters.AddWithValue("@carId", carId);
+
+        //            int rentalUpdateResult = await rentalRequestCommand.ExecuteNonQueryAsync();
+        //            if (rentalUpdateResult == 0)
+        //                throw new InvalidOperationException("Failed to update the rental request. Rental ID or Car ID may be incorrect.");
+        //        }
+        //    }
+
+        //    return true;
+        //}
+
+
+
+
 
         //public ICollection<GetStatusRequest> GetRentalRequestStatus(string rentalId)
         //{
@@ -198,4 +321,4 @@ namespace Car_Rental_API.Repository
         //    }
         //}
     }
-}   
+}
