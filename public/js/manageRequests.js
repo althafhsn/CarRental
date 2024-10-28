@@ -6,7 +6,7 @@ window.onload = () => {
 
 function initializeSearch() {
   const searchInput = document.querySelector('.form-group input'); // The search input field
-  
+
   if (!searchInput) {
     console.error("Search input field not found!");
     return;
@@ -65,51 +65,78 @@ function searchTable(tableRows, searchValue) {
 // Initialize the search when the page is loaded
 
 
-async function updateRentalRequestStatus(requestId, action, status) {
-    try {
-        // Send the PUT request to update the status
-        const response = await fetch('http://localhost:5034/api/RentalRequest/updateAction', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ rentalId: requestId, action, status })
-        });
+async function updateRentalRequestAction(requestId, action) {
+  try {
+    // Send the PUT request to update the status
+    const response = await fetch('http://localhost:5034/api/RentalRequest/updateAction', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ rentalId: requestId, action })
+    });
 
-        // Check if the request was successful
-        if (!response.ok) {
-            throw new Error('Failed to update status');
-        }
-
-        const result = await response.json();
-        console.log(result.message);
-
-        // Optionally, update the UI to reflect the status change
-        const statusContainer = document.querySelector(`#status-container-${requestId}`);
-        if (statusContainer) {
-            // Replace the buttons with the status text
-            statusContainer.innerHTML = `<span class="badge bg-${action === 'Approved' ? 'success' : 'danger'}">${action}</span>`;
-        }
-
-    } catch (error) {
-        console.error('Error updating status:', error);
+    // Check if the request was successful
+    if (!response.ok) {
+      throw new Error('Failed to update status');
     }
+
+    const result = await response.json();
+    console.log(result.message);
+
+    // Optionally, update the UI to reflect the status change
+    const statusContainer = document.querySelector(`#status-container-${requestId}`);
+    if (statusContainer) {
+      // Replace the buttons with the status text
+      statusContainer.innerHTML = `<span class="badge bg-${action === 'Approved' ? 'success' : 'danger'}">${action}</span>`;
+    }
+
+  } catch (error) {
+    console.error('Error updating status:', error);
+  }
+}
+
+async function updateRentalRequestStatus(carId, status) {
+  try {
+    // Send the PUT request to update the status
+    const response = await fetch(`http://localhost:5034/api/Cars/UpdateCarStatus/${carId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status })
+    });
+
+    // Check if the request was successful
+    if (!response.ok) {
+      throw new Error('Failed to update status');
+    }
+
+    const result = await response.json();
+    console.log(result.message);
+
+  } catch (error) {
+    console.error('Error updating status:', error);
+  }
 }
 
 // Event listener for status update (approve or reject)
 document.addEventListener('click', (event) => {
-    // Check if the clicked element is an approve or reject button
-    const approveButton = event.target.closest('.fa-check');
-    const rejectButton = event.target.closest('.fa-xmark');
+  // Check if the clicked element is an approve or reject button
+  const approveButton = event.target.closest('.fa-check');
+  const rejectButton = event.target.closest('.fa-xmark');
 
-    if (approveButton || rejectButton) {
-        const requestId = event.target.closest('.edit-btn').getAttribute('data-request-id');
-        const action = rejectButton ? 'Rejected' : 'Approved';
-        const status = approveButton ? 'd-none' : 'cenceled'
+  if (approveButton || rejectButton) {
+    const requestId = event.target.closest('.edit-btn').getAttribute('data-request-id');
+    const carId = event.target.closest('.edit-btn').getAttribute('data-car-id');
+    const action = rejectButton ? 'Rejected' : 'Approved';
+    const status = approveButton ? 'd-none' : 'show'
 
-        // Call the function to update the rental request status
-        updateRentalRequestStatus(requestId, action,status);
-    }
+    // Call the function to update the rental request status
+    updateRentalRequestAction(requestId, action);
+    updateRentalRequestStatus(carId, status)
+
+  }
 });
 
 // Function to display the rental requests in the table
@@ -118,9 +145,9 @@ function displayRentalRequest(requests) {
   tableBody.innerHTML = ''; // Clear the existing rows
 
   requests.forEach((request, index) => {
-      const row = document.createElement('tr');
+    const row = document.createElement('tr');
 
-      row.innerHTML = `
+    row.innerHTML = `
           <td>${index + 1}</td>
           <td>${request.rentalId}</td>
           <td>${request.requestDate}</td>
@@ -131,9 +158,9 @@ function displayRentalRequest(requests) {
           <td>${request.duration}</td>
           <td>${request.totalPrice}</td>
           <td id="status-container-${request.rentalId}">
-              ${request.action === 'Approved' || request.action === 'Rejected' ? 
-                  `<span class="badge bg-${request.action === 'Approved' ? 'success' : 'danger'}">${request.action}</span>` :
-                  ` 
+              ${request.action === 'Approved' || request.action === 'Rejected' ?
+        `<span class="badge bg-${request.action === 'Approved' ? 'success' : 'danger'}">${request.action}</span>` :
+        ` 
                   <button class="btn btn-outline-primary edit-btn" data-request-id="${request.rentalId}">
                       <i class="fa-solid fa-check"></i>
                   </button> 
@@ -141,7 +168,7 @@ function displayRentalRequest(requests) {
                       <i class="fa-solid fa-xmark"></i>
                   </button>
                   `
-              }
+      }
           </td>
           <td>
               <button class="btn btn-outline-primary return-btn" data-rental-id="${request.rentalId}" ${request.action === 'Rejected' ? 'disabled' : ''}onclick="handleReturnButtonClick('rentalId')">
@@ -150,37 +177,37 @@ function displayRentalRequest(requests) {
           </td>
       `;
 
-      tableBody.appendChild(row);
+    tableBody.appendChild(row);
   });
 
   // Attach click event listeners for customerId and carId links
   document.querySelectorAll('.customer-id-link').forEach(link => {
-      link.addEventListener('click', function (event) {
-          event.preventDefault();
-          const customerId = event.target.getAttribute('data-customer-id');
-          openCustomerDetailsModal(customerId); // Function to open customer modal
-      });
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      const customerId = event.target.getAttribute('data-customer-id');
+      openCustomerDetailsModal(customerId); // Function to open customer modal
+    });
   });
 
   document.querySelectorAll('.car-id-link').forEach(link => {
-      link.addEventListener('click', function (event) {
-          event.preventDefault();
-          const carId = event.target.getAttribute('data-car-id');
-          openCarDetailsModal(carId); // Function to open car modal
-      });
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      const carId = event.target.getAttribute('data-car-id');
+      openCarDetailsModal(carId); // Function to open car modal
+    });
   });
 
   // Attach click event listeners for return buttons
   document.querySelectorAll('.return-btn').forEach(button => {
-      button.addEventListener('click', function () {
-          const rentalId = this.getAttribute('data-rental-id');
-          console.log(`Return clicked for Rental ID: ${rentalId}`);
+    button.addEventListener('click', function () {
+      const rentalId = this.getAttribute('data-rental-id');
+      console.log(`Return clicked for Rental ID: ${rentalId}`);
 
-          // Change the button text to "Returned"
-          this.textContent = 'Returned';
-          this.classList.add('btn-success'); // Optional: Add a class to change button color
-          this.disabled = true; // Disable the button after it's clicked
-      });
+      // Change the button text to "Returned"
+      this.textContent = 'Returned';
+      this.classList.add('btn-success'); // Optional: Add a class to change button color
+      this.disabled = true; // Disable the button after it's clicked
+    });
   });
 }
 
@@ -192,15 +219,15 @@ document.addEventListener('DOMContentLoaded', () => {
 // Fetch rental requests from the backend API
 async function fetchRentalRequest() {
   try {
-      const response = await fetch('http://localhost:5034/api/RentalRequest/getAllRentalRequests');
-      if (!response.ok) { 
-          throw new Error('Failed to fetch Request'); 
-      }
-      const requests = await response.json();
-      displayRentalRequest(requests); // Call the function to display the requests
+    const response = await fetch('http://localhost:5034/api/RentalRequest/getAllRentalRequests');
+    if (!response.ok) {
+      throw new Error('Failed to fetch Request');
+    }
+    const requests = await response.json();
+    displayRentalRequest(requests); // Call the function to display the requests
   } catch (err) {
-      console.error('Error fetching Request:', err);
-      return [];
+    console.error('Error fetching Request:', err);
+    return [];
   }
 }
 
