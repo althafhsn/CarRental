@@ -944,7 +944,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Function to open edit modal for users
 async function openUserEditModal(userId) {
   try {
-      const response = await fetch(`http://localhost:5034/api/Customer/GetCustomerById/customerId=${userId}`);
+      const response = await fetch(`http://localhost:5034/api/Customer/GetCustomerById?customerId=${userId}`);
       if (!response.ok) {
           throw new Error(`User not found (status: ${response.status})`);
       }
