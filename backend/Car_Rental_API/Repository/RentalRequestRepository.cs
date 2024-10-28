@@ -1,4 +1,6 @@
-﻿using Car_Rental_API.Entity;
+﻿
+
+using Car_Rental_API.Entity;
 using Car_Rental_API.IRepository;
 using Car_Rental_API.Model;
 using Microsoft.Data.SqlClient;
@@ -129,24 +131,26 @@ namespace Car_Rental_API.Repository
             return null;
 
         }
-        public bool UpdateRentalRequestAction(UpdateActionRequest updateAction)
-        {
-            string updateQuery = @"UPDATE RentalRequests SET Action = @action, Status = @status WHERE RentalId = @rentalId";
 
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            {
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
-                {
-                    cmd.Parameters.AddWithValue("@rentalId", updateAction.RentalId);
-                    cmd.Parameters.AddWithValue("@action",updateAction.Action);
-                    cmd.Parameters.AddWithValue("@status", updateAction.Status);
 
-                    int rowsAffected = cmd.ExecuteNonQuery();
-                    return rowsAffected > 0;  // Return true if update is successful
-                }
-            }
-        }
+        //public bool UpdateRentalRequestAction(UpdateActionRequest updateAction)
+        //{
+        //    string updateQuery = @"UPDATE RentalRequests SET Action = @action, Status = @status WHERE RentalId = @rentalId";
+
+        //    using (SqlConnection conn = new SqlConnection(_connectionString))
+        //    {
+        //        conn.Open();
+        //        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@rentalId", updateAction.RentalId);
+        //            cmd.Parameters.AddWithValue("@action",updateAction.Action);
+        //            cmd.Parameters.AddWithValue("@status", updateAction.Status);
+
+        //            int rowsAffected = cmd.ExecuteNonQuery();
+        //            return rowsAffected > 0;  // Return true if update is successful
+        //        }
+        //    }
+        //}
 
         //public ICollection<GetStatusRequest> GetRentalRequestStatus(string rentalId)
         //{
