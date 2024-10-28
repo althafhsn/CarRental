@@ -16,8 +16,7 @@
         public DateTime RequestDate { get; set; } = DateTime.Now;
 
         // Navigation properties (optional)
-        //public Customer customer { get; set; }
-        //public Car car { get; set; }
+        public Car car { get; set; }
 
         public RentalRequest(string rentalId,string carId, string customerId, DateTime startDate, DateTime endDate,int duration, decimal totalPrice, string action, string status, DateTime requestDate)
         {
