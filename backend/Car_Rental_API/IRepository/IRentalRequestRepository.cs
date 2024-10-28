@@ -11,7 +11,7 @@ namespace Car_Rental_API.IRepository
         //bool UpdateRentalRequestStatus(string rentalId, string status);
         bool UpdateRentalRequestAction(UpdateActionRequest updateAction);
         //ICollection<GetStatusRequest> GetRentalRequestStatus(string rentalId);
-
-
+        bool UpdateCarAndRentalRequest(UpdateActionRequest updateAction);
+        Task FindCarByIdAsync(string carId);
     }
 }

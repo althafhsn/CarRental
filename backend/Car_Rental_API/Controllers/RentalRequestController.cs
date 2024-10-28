@@ -89,6 +89,39 @@ namespace Car_Rental_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpPut("updateStatusAndAction")]
+        public async Task<IActionResult> UpdateCarAndRentalRequest([FromBody] UpdateActionRequest request)
+        {
+            // Find the car by CarId
+            var car = await rentalRequestRepository.UpdateCarAndRentalRequest.FindAsync(request.CarId);
+            if (car == null)
+            {
+                return NotFound("Car not found");
+            }
+
+            // Find the rental request by RentalRequestId
+            var rentalRequest = await rentalRequestRepository.UpdateCarAndRentalRequest.FindAsync(request.RentalId);
+            if (rentalRequest == null || rentalRequest.CarId != request.CarId)
+            {
+                return NotFound("Rental request not found or does not match the car");
+            }
+
+            // Update fields
+            car.Status = request.CarStatus;
+            rentalRequest.Acti
+                on = request.Action;
+
+            // Save changes to both tables in one transaction
+            try
+            {
+                await rentalRequestRepository.SaveChangesAsync();
+                return Ok("Car status and rental request action updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         //[HttpGet("get-Status")]
         //public IActionResult GetRentalRequestStatus(string rentalId)

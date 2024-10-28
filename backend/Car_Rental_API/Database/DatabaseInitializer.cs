@@ -62,7 +62,7 @@ namespace Car_Rental_API.Database
             Year INT,
             RegNo NVARCHAR(50) NOT NULL,
             DailyPrice DECIMAL(10,2) NOT NULL,
-            Status NVARCHAR(50) NOT NULL
+            CarStatus NVARCHAR(50) NOT NULL
         );
 
         IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Customers' AND xtype='U') 

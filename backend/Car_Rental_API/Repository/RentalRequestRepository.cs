@@ -132,74 +132,117 @@ namespace Car_Rental_API.Repository
 
         }
 
+        public bool UpdateCarAndRentalRequest(UpdateActionRequest updateAction)
+        {
+            string updateCarQuery = "UPDATE Cars SET CarStatus = @status WHERE CarId = @carId";
+            string updateRentalRequestQuery = "UPDATE RentalRequest SET Action = @action WHERE RentalId = @rentalRequestId AND CarId = @carId";
 
-        //public bool UpdateRentalRequestAction(UpdateActionRequest updateAction)
-        //{
-        //    string updateQuery = @"UPDATE RentalRequests SET Action = @action, Status = @status WHERE RentalId = @rentalId";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlTransaction transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // Update the status in the Cars table
+                        using (SqlCommand carCommand = new SqlCommand(updateCarQuery, conn, transaction))
+                        {
+                            carCommand.Parameters.AddWithValue("@status", updateAction.CarStatus);
+                            carCommand.Parameters.AddWithValue("@carId", updateAction.CarId);
+                            carCommand.ExecuteNonQuery();
+                        }
 
-        //    using (SqlConnection conn = new SqlConnection(_connectionString))
-        //    {
-        //        conn.Open();
-        //        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
-        //        {
-        //            cmd.Parameters.AddWithValue("@rentalId", updateAction.RentalId);
-        //            cmd.Parameters.AddWithValue("@action",updateAction.Action);
-        //            cmd.Parameters.AddWithValue("@status", updateAction.Status);
+                        // Update the action in the RentalRequest table
+                        using (SqlCommand rentalRequestCommand = new SqlCommand(updateRentalRequestQuery, conn, transaction))
+                        {
+                            rentalRequestCommand.Parameters.AddWithValue("@action", updateAction.Action);
+                            rentalRequestCommand.Parameters.AddWithValue("@rentalRequestId", updateAction.RentalId);
+                            rentalRequestCommand.Parameters.AddWithValue("@carId", updateAction.CarId);
+                            rentalRequestCommand.ExecuteNonQuery();
+                        }
 
-        //            int rowsAffected = cmd.ExecuteNonQuery();
-        //            return rowsAffected > 0;  // Return true if update is successful
-        //        }
-        //    }
-        //}
-
-        //public ICollection<GetStatusRequest> GetRentalRequestStatus(string rentalId)
-        //{
-        //    var status = new List<GetStatusRequest>();
-        //    string query = @"SELECT Status CarId FROM RentalRequests WHERE RentalId = @rentalId";
-        //    using (SqlConnection conn = new SqlConnection(_connectionString))
-        //    {
-        //        conn.Open();
-        //        using (SqlCommand cmd = new SqlCommand(query, conn))
-        //        {
-        //            cmd.Parameters.AddWithValue("@rentalId",rentalId);
-        //            //    cmd.Parameters.AddWithValue(@"carId", getStatus.CarId);
-        //            using (SqlDataReader reader = cmd.ExecuteReader())
-        //            {
-        //                while (reader.Read())
-        //                {
-
-        //                    status.Add(new GetStatusRequest()
-        //                    {
-        //                        RentalId = reader.GetString(0),
-        //                        CarId = reader.GetString(1),
-        //                        Status = reader.GetString(2)
-        //                    });
-
-        //                }
+                        // Commit transaction if both commands are successful
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        // Rollback transaction if there's an error
+                        transaction.Rollback();
+                        throw; // Rethrow the error to handle it outside this method
+                    }
+                }
+            }
 
 
-        //            }
-        //        }
-        //    }
-        //    return status;
-        //}
+            //public bool UpdateRentalRequestAction(UpdateActionRequest updateAction)
+            //{
+            //    string updateQuery = @"UPDATE RentalRequests SET Action = @action, CarStatus = @status WHERE RentalId = @rentalId";
 
-        //public bool UpdateRentalRequestStatus(string rentalId, string status)
-        //{
-        //    string updateQuery = @"UPDATE RentalRequests SET Status = @status WHERE RentalId = @rentalId";
+            //    using (SqlConnection conn = new SqlConnection(_connectionString))
+            //    {
+            //        conn.Open();
+            //        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+            //        {
+            //            cmd.Parameters.AddWithValue("@carId", updateAction.CarId);  
+            //            cmd.Parameters.AddWithValue("@rentalId", updateAction.RentalId);
+            //            cmd.Parameters.AddWithValue("@action", updateAction.Action);
+            //            cmd.Parameters.AddWithValue("@status", updateAction.CarStatus);
 
-        //    using (SqlConnection conn = new SqlConnection(_connectionString))
-        //    {
-        //        conn.Open();
-        //        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
-        //        {
-        //            cmd.Parameters.AddWithValue("@status", status);
-        //            cmd.Parameters.AddWithValue("@rentalId", rentalId);
+            //            int rowsAffected = cmd.ExecuteNonQuery();
+            //            return rowsAffected > 0;  // Return true if update is successful
+            //        }
+            //    }
+            //}
 
-        //            int rowsAffected = cmd.ExecuteNonQuery();
-        //            return rowsAffected > 0;  // Return true if update is successful
-        //        }
-        //    }
-        //}
-    }
+            //public ICollection<GetStatusRequest> GetRentalRequestStatus(string rentalId)
+            //{
+            //    var status = new List<GetStatusRequest>();
+            //    string query = @"SELECT Status CarId FROM RentalRequests WHERE RentalId = @rentalId";
+            //    using (SqlConnection conn = new SqlConnection(_connectionString))
+            //    {
+            //        conn.Open();
+            //        using (SqlCommand cmd = new SqlCommand(query, conn))
+            //        {
+            //            cmd.Parameters.AddWithValue("@rentalId",rentalId);
+            //            //    cmd.Parameters.AddWithValue(@"carId", getStatus.CarId);
+            //            using (SqlDataReader reader = cmd.ExecuteReader())
+            //            {
+            //                while (reader.Read())
+            //                {
+
+            //                    status.Add(new GetStatusRequest()
+            //                    {
+            //                        RentalId = reader.GetString(0),
+            //                        CarId = reader.GetString(1),
+            //                        Status = reader.GetString(2)
+            //                    });
+
+            //                }
+
+
+            //            }
+            //        }
+            //    }
+            //    return status;
+            //}
+
+            //public bool UpdateRentalRequestStatus(string rentalId, string status)
+            //{
+            //    string updateQuery = @"UPDATE RentalRequests SET Status = @status WHERE RentalId = @rentalId";
+
+            //    using (SqlConnection conn = new SqlConnection(_connectionString))
+            //    {
+            //        conn.Open();
+            //        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+            //        {
+            //            cmd.Parameters.AddWithValue("@status", status);
+            //            cmd.Parameters.AddWithValue("@rentalId", rentalId);
+
+            //            int rowsAffected = cmd.ExecuteNonQuery();
+            //            return rowsAffected > 0;  // Return true if update is successful
+            //        }
+            //    }
+            //}
+        }
 }   
