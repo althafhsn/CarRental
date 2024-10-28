@@ -1,4 +1,4 @@
-document.getElementById('adminSigninFormBtn').addEventListener('click', (e)=>{
+document.getElementById('adminSigninForm').addEventListener('click', (e)=>{
     e.preventDefault();
     const username=document.getElementById('adminUserName').value;
     const password = document.getElementById('adminPassword').value;

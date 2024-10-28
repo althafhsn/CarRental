@@ -204,8 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-// Image preview
-console.log("fcghbjk")
+
 // Function to fetch available cars
 async function fetchAvailableCars() {
     try {
