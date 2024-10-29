@@ -9,13 +9,9 @@ namespace Car_Rental_API.IRepository
         Task<RentalRequest> AddRentalRequest(RentalRequest rentalRequest);
         Task<ICollection<RentalRequest>> GetRentalRequest();
         Task<RentalRequest> GetRentalRequestById(string rentalId);
-        //bool UpdateRentalRequestStatus(string rentalId, string status);
+
         Task<bool> UpdateRentalRequestAction(UpdateActionRequest updateAction);
-        //ICollection<GetStatusRequest> GetRentalRequestStatus(string rentalId);
-
-        //Task<bool> UpdateCarAndRentalRequest(string carId, string carStatus, string rentalId, string action);
-        //Task<UpdateResult> UpdateCarAndRentalRequest(string carId, string carStatus, string rentalId, string action);
-
+        Task<bool> UpdateRentalReturn(UpdatgeReturnRequest updateReturn);
 
     }
 }

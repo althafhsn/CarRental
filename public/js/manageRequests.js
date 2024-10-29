@@ -119,6 +119,29 @@ async function updateRentalRequestStatus(carId, carStatus) {
     console.error('Error updating status:', error);
   }
 }
+async function updateRentalReturn(requestId, atatus) {
+  try {
+    // Send the PUT request to update the status
+    const response = await fetch('https://localhost:5043/api/RentalRequest/UpdateStatus', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ rentalId: requestId, atatus })
+    });
+
+    // Check if the request was successful
+    if (!response.ok) {
+      throw new Error('Failed to update status');
+    }
+
+    const result = await response.json();
+    console.log(result.message);
+
+  } catch (error) {
+    console.error('Error updating status:', error);
+  }
+}
 
 // Event listener for status update (approve or reject)
 document.addEventListener('click', (event) => {
@@ -129,18 +152,36 @@ document.addEventListener('click', (event) => {
   if (approveButton || rejectButton) {
     const requestId = event.target.closest('.edit-btn').getAttribute('data-request-id');
     const carId = event.target.closest('.edit-btn').getAttribute('data-car-id');
-    const action = rejectButton ? 'Rejected' : 'Approved';
+    const action = approveButton ? 'Approved' : 'Rejected';
     const status = approveButton ? 'd-none' : 'show'
 
     console.log(carId)
     // Call the function to update the rental request status
     updateRentalRequestAction(requestId, action);
-    updateRentalRequestStatus(carId, status)
-
-    
+    updateRentalRequestStatus(carId, status)    
 
   }
 });
+
+document.addEventListener('click', (event) => {
+  // Check if the clicked element is an approve or reject button
+  const returnBtn = event.target.closest('.return-btn');
+
+
+  if (returnBtn) {
+    const requestId = event.target.closest('.return-btn').getAttribute('data-request-id');
+    const carId = event.target.closest('.return-btn').getAttribute('data-car-id');
+    const status = returnBtn ? 'Returned' : 'Active';
+    const carStatus = returnBtn ? 'show' : 'd-none'
+
+    // Call the function to update the rental request status
+    updateRentalReturn(requestId, status)
+    updateRentalRequestStatus(carId, carStatus)    
+
+  }
+});
+
+
 
 // Function to display the rental requests in the table
 function displayRentalRequest(requests) {
@@ -174,7 +215,7 @@ function displayRentalRequest(requests) {
       }
           </td>
           <td>
-              <button class="btn btn-outline-primary return-btn" data-rental-id="${request.rentalId}" ${request.action === 'Rejected' ? 'disabled' : ''}onclick="handleReturnButtonClick('rentalId')">
+              <button class="btn btn-outline-primary return-btn" data-request-id="${request.rentalId}" data-car-id="${request.carId}" ${request.action === 'Rejected' ? 'disabled' : ''}onclick="handleReturnButtonClick('rentalId')">
                   Return
               </button>
           </td>

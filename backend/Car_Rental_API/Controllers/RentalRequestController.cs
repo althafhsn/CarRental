@@ -4,6 +4,7 @@ using Car_Rental_API.Model;
 using Car_Rental_API.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Car_Rental_API.Controllers
 {
@@ -20,7 +21,7 @@ namespace Car_Rental_API.Controllers
         [HttpPost("addRentalRequest")]
         public async Task<IActionResult> AddRentalRequest(RentalRequest rentalRequest)
         {
-            // Create a new RentalRequest object
+
             RentalRequest rental = new RentalRequest(
                 rentalRequest.RentalId,
                 rentalRequest.CarId,
@@ -34,10 +35,8 @@ namespace Car_Rental_API.Controllers
                 rentalRequest.RequestDate
             );
 
-            // Assuming AddRentalRequest is a synchronous method, we wrap it in Task.Run
             var rentalData = await Task.Run(() => rentalRequestRepository.AddRentalRequest(rental));
 
-            // Return the result using Ok()
             return Ok(rentalData);
         }
 
@@ -89,63 +88,30 @@ namespace Car_Rental_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        //[HttpPut("updateStatusAndAction")]
-        //public async Task<IActionResult> UpdateStatusAndAction(string carId, string carStatus, string rentalId, string action)
-        //{
-        //    try
-        //    {
-        //        var result = await rentalRequestRepository.UpdateCarAndRentalRequest(carId, carStatus, rentalId, action);
+        [HttpPut("UpdateStatus")]
+        public async Task<IActionResult> UpdateRentalReturn(UpdatgeReturnRequest updateReturn)
+        {
+            if (updateReturn == null || string.IsNullOrEmpty(updateReturn.RentalId) || string.IsNullOrEmpty(updateReturn.Status))
+            {
+                return BadRequest("Invalid request data");
+            }
 
-        //        if (result.Success)
-        //        {
-        //            return Ok(result.Message); // Returns the success message from the UpdateResult
-        //        }
-        //        else
-        //        {
-        //            return BadRequest(result.Message); // Returns the error message from the UpdateResult
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-        //}
-
-
-
-
-
-        //[HttpGet("get-Status")]
-        //public IActionResult GetRentalRequestStatus(string rentalId)
-        //{
-        //    var status = rentalRequestRepository.GetRentalRequestStatus(rentalId);
-        //    return Ok(status);
-        //}
-
-        //[HttpPut("updateStatus")]
-        //public IActionResult UpdateRentalRequestStatus([FromBody] UpdateStatusRequestcs updateRequest)
-        //{
-        //    if (updateRequest == null || string.IsNullOrEmpty(updateRequest.RentalId) || string.IsNullOrEmpty(updateRequest.Status))
-        //    {
-        //        return BadRequest("Invalid request data");
-        //    }
-
-        //    try
-        //    {
-        //        var isUpdated = rentalRequestRepository.UpdateRentalRequestStatus(updateRequest.RentalId, updateRequest.Status);
-        //        if (isUpdated)
-        //        {
-        //            return Ok(new { message = "Rental request status updated successfully" });
-        //        }
-        //        else
-        //        {
-        //            return NotFound("Rental request not found");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-        //}
+            try
+            {
+                var isUpdated = await rentalRequestRepository.UpdateRentalReturn(updateReturn);
+                if (isUpdated)
+                {
+                    return Ok(isUpdated);
+                }
+                else
+                {
+                    return NotFound("Rental request not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

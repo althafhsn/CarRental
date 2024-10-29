@@ -5,4 +5,10 @@
         public string RentalId { get; set; }
         public string Action {  get; set; }
     }
+
+    public class UpdatgeReturnRequest
+    {
+        public string RentalId { get; set; }
+        public string Status { get; set; }
+    }
 }
