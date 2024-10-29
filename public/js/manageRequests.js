@@ -96,15 +96,15 @@ async function updateRentalRequestAction(requestId, action) {
   }
 }
 
-async function updateRentalRequestStatus(carId, status) {
+async function updateRentalRequestStatus(carId, carStatus) {
   try {
     // Send the PUT request to update the status
-    const response = await fetch(`http://localhost:5034/api/Cars/UpdateCarStatus/${carId}`, {
+    const response = await fetch(`https://localhost:5043/api/Car/UpdateStatusCarById?carId=${carId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ status })
+      body: JSON.stringify({ carStatus })
     });
 
     // Check if the request was successful
@@ -132,9 +132,12 @@ document.addEventListener('click', (event) => {
     const action = rejectButton ? 'Rejected' : 'Approved';
     const status = approveButton ? 'd-none' : 'show'
 
+    console.log(carId)
     // Call the function to update the rental request status
     updateRentalRequestAction(requestId, action);
     updateRentalRequestStatus(carId, status)
+
+    
 
   }
 });
@@ -161,10 +164,10 @@ function displayRentalRequest(requests) {
               ${request.action === 'Approved' || request.action === 'Rejected' ?
         `<span class="badge bg-${request.action === 'Approved' ? 'success' : 'danger'}">${request.action}</span>` :
         ` 
-                  <button class="btn btn-outline-primary edit-btn" data-request-id="${request.rentalId}">
+                  <button class="btn btn-outline-primary edit-btn" data-request-id="${request.rentalId}" data-car-id="${request.carId}">
                       <i class="fa-solid fa-check"></i>
                   </button> 
-                  <button class="btn btn-outline-danger edit-btn" data-request-id="${request.rentalId}">
+                  <button class="btn btn-outline-danger edit-btn" data-request-id="${request.rentalId}" data-car-id="${request.carId}">
                       <i class="fa-solid fa-xmark"></i>
                   </button>
                   `

@@ -189,7 +189,7 @@ async function submitCarForm() {
         year: carYear.value,
         regNo: regNo.value,
         dailyPrice: dayPrice.value,
-        status : "show"
+        carStatus : "show"
 
     };
 

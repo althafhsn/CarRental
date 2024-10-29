@@ -9,9 +9,9 @@ namespace Car_Rental_API.IRepository
     {
         Task<Car> CreateCar(Car car);
         Task<ICollection<Car>> GetCars();
-        Task<Car> GetCarById(string carId);
+        Task<Car> GetCarByIdASync(string carId);
         Task<CarUpdateRequest> UpdateCar(string carId, CarUpdateRequest carUpdateRequest);
         void DeleteCar(string id);
-        Task<UpdateCarStatusRequest> UpdateCarStatus(string carId, UpdateCarStatusRequest updateCarStatus);
+        Task<UpdateCarStatusRequest> UpdateCarStatusAsync(string carId, UpdateCarStatusRequest updateCarStatus);
     }
 }

@@ -101,7 +101,7 @@ namespace Car_Rental_API.Repository
             return cars;
         }
 
-        public async Task<Car> GetCarById(string carId)
+        public async Task<Car> GetCarByIdASync(string carId)
         {
             string getQuery = @"SELECT * FROM Cars WHERE CarId = @carId";
             try
@@ -153,7 +153,7 @@ namespace Car_Rental_API.Repository
         public async Task<CarUpdateRequest> UpdateCar(string carId, CarUpdateRequest carUpdateRequest)
         {
 
-            var car = GetCarById(carId);
+            var car = await GetCarByIdASync(carId);
             string updateQuery = @"UPDATE Cars SET Brand=@brand,Model=@model,GearType=@gearType,SeatCount=@seatCount,FuelType=@fuelType,Mileage=@mileage,Year=@year,RegNo=@regNo, DailyPrice=@dailyPrice WHERE CarId=@carId";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -202,11 +202,16 @@ namespace Car_Rental_API.Repository
             }
 
         }
-        public async Task<UpdateCarStatusRequest> UpdateCarStatus(string carId, UpdateCarStatusRequest updateCarStatus)
-        {
 
-            var car = GetCarById(carId);
-            string updateQuery = @"UPDATE Cars SET CarStatus=@carstatus WHERE CarId=@carId";
+        public async Task<UpdateCarStatusRequest> UpdateCarStatusAsync(string carId, UpdateCarStatusRequest updateCarStatus)
+        {
+            var car = await GetCarByIdASync(carId);  // Ensure this is async
+            if (car == null)
+            {
+                throw new Exception("Car not found");
+            }
+
+            string updateQuery = @"UPDATE Cars SET CarStatus = @carStatus WHERE CarId = @carId";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
@@ -216,11 +221,10 @@ namespace Car_Rental_API.Repository
                     command.Parameters.AddWithValue("@carStatus", updateCarStatus.CarStatus);
 
                     await command.ExecuteNonQueryAsync();
-
                 }
             }
 
-            return  updateCarStatus;
+            return updateCarStatus; // Return updated status object
         }
 
 

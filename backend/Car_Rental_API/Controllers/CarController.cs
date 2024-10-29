@@ -54,7 +54,7 @@ namespace Car_Rental_API.Controllers
         {
             try
             {
-                var car =await _carRepository.GetCarById(carId);
+                var car = await _carRepository.GetCarByIdASync(carId);
                 return Ok(car);
             }catch (Exception ex)
             {
@@ -87,18 +87,15 @@ namespace Car_Rental_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpPut("UpdateCarById{carId}")]
+        [HttpPut("UpdateStatusCarById")]
         public async Task<IActionResult> UpdateCarStatus(string carId, UpdateCarStatusRequest updateCarStatus)
         {
             try
             {
-                var status = await _carRepository.UpdateCarStatus(carId, updateCarStatus);
+                var result = await _carRepository.UpdateCarStatusAsync(carId, updateCarStatus);
 
-                // Wrap the result in an object
-                var response = status;
-
-                return Ok(response);
+                // Wrap the result in a response object with appropriate naming
+                return Ok(new { Message = "Car status updated successfully", Status = result.CarStatus });
             }
             catch (Exception ex)
             {

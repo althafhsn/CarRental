@@ -22,7 +22,7 @@ async function fetchAndDisplayCars(filterCriteria = {}) {
             filteredCars.forEach(car => {
                 const cardHTML = `
                     <div class="col ">
-                        <div class="card car-card ${car.status}">
+                        <div class="card car-card ${car.carStatus}">
                             <label class="form-label d-none">${car.carId}</label>
                             <div class="col-12">
                                 <img src="${car.imagePath}" class="card-img-top" alt="${car.model}">
